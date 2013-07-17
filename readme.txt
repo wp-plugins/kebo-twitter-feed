@@ -59,7 +59,7 @@ Another answer.
 = 0.15 =
 * Note: Initial version.
 
-= Developers Notes =
+== Developers Notes ==
 
 You can directly access the object containing all the Tweets like this:
 
@@ -79,7 +79,7 @@ This function checks the cache and refreshes the data if needed. Then returns th
 <?php endforeach; ?>
 `
 
-= Styling the Widget =
+== Styling the Widget ==
 
 We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
 
