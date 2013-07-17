@@ -13,14 +13,15 @@ Connect your site to your Twitter account and display your Twitter Feed on your 
 
 Hassle-free and user-friendly way to add a Twitter Feed to your website. We provide a custom Widget to help you display the Twitter Feed on your website, as well as direct access to the data for developers.
 
-We access your Twitter Feed through you giving permission for our Kebo Twitter App to read your Twitter Feed. Your website can then request an updated list of Tweets at any point through our OAuth request server using the credentials stored on your own site, at no point will we store and log any of your information. You can get more information regarding how we treat your data in our [Privacy Policy](http://kebopowered.com/privacy-policy/ "Kebo Privacy Policy").
+We access your Twitter Feed through you giving permission for our Kebo Twitter App to read your Twitter Feed. Your website can then request an updated list of Tweets at any point through our OAuth request server using the credentials stored on your own site, at no point will we store and log any of your information. You can get more information regarding how we treat your data in our [privacy policy](http://kebopowered.com/privacy-policy/ "Kebo Privacy Policy").
 
 Features include:
 
 * Hassle-free Twitter API handling. We take care of the OAuth Requests for you.
 * Connect your website to Twitter in seconds with no technical knowledge required.
 * Caching used to avoid needless requests every page re-fresh.
-* Local cache backup, incase the connection to Twitter has problems.
+* Local cache backup, in case the connection to Twitter has problems.
+* Handy Widget to display your feed easily.
 
 == Installation ==
 
@@ -44,9 +45,13 @@ Your website will hold your OAuth2 credentials and a list of your latest tweets.
 
 The Kebo Twitter App only requests Read access to your account. This prevents us from ever creating tweets or sending direct messages on your behalf.
 
-= Another question? =
+= I have found a bug or need help using the plugin, what do I do? =
 
-Another answer.
+Let us know in our [Support Forum](http://wordpress.org/support/plugin/kebo-twitter-feed). We want to hear about any bugs and/or problems ASAP so that we can fix them to improve the experience for all users.
+
+= There is something cool you could add... =
+
+Fantastic, make a post on the [Support Forum](http://wordpress.org/support/plugin/kebo-twitter-feed) and let us know. We are always looking for ways to improve our plugins.
 
 == Screenshots ==
 
@@ -65,7 +70,7 @@ You can directly access the object containing all the Tweets like this:
 
 `<?php $tweets = kebo_twitter_get_tweets(); ?>`
 
-This function checks the cache and refreshes the data if needed. Then returns the object containing all the Tweets.
+This function checks the cache and refreshes the data if needed. Then returns the object containing all the Tweets. Below is an example of how you might use the data:
 
 `
 <?php $i = 0; ?>
@@ -74,7 +79,7 @@ This function checks the cache and refreshes the data if needed. Then returns th
 
     <?php echo $tweet->text; ?>
 
-    <?php if ( ++$i == $instance['count'] ) break; ?>
+    <?php if ( ++$i == 10 ) break; ?>
 
 <?php endforeach; ?>
 `
@@ -83,7 +88,7 @@ This function checks the cache and refreshes the data if needed. Then returns th
 
 We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
 
-If you want to style the inside of the Widget below is the structure of the widget:
+If you want to style the inside of the Widget below is the HTML structure:
 
 `
 <ul class="kebo-tweets vertical">
@@ -108,5 +113,5 @@ If you want to style the inside of the Widget below is the structure of the widg
 </ul>
 `
 
-The slider has one significant change which is that the <ul> has an ID of 'kebo-tweet-slider'.
+The slider has one significant change which is that the containing unordered list has an ID of 'kebo-tweet-slider'.
 
