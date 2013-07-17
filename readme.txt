@@ -57,20 +57,56 @@ Another answer.
 == Changelog ==
 
 = 0.15 =
-* Initial version.
+* Note: Initial version.
 
-== Documentation ==
-
-This section is for designers or developers looking to customise the output of the plugin or access its data directly.
-
-= Developers =
+= Developers Notes =
 
 You can directly access the object containing all the Tweets like this:
 
 `<?php $tweets = kebo_twitter_get_tweets(); ?>`
 
-You can also
+This function checks the cache and refreshes the data if needed. Then returns the object containing all the Tweets.
+
+`
+<?php $i = 0; ?>
+
+<?php foreach ($tweets as $tweet) : ?>
+
+    <?php echo $tweet->text; ?>
+
+    <?php if ( ++$i == $instance['count'] ) break; ?>
+
+<?php endforeach; ?>
+`
 
 = Styling the Widget =
 
-Coming soon...
+We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
+
+If you want to style the inside of the Widget below is the structure of the widget:
+
+`
+<ul class="kebo-tweets vertical">
+
+    <li class="tweet">
+
+        <div class="meta">
+            <a class="account"></a>
+            <a class="date"></a>
+        </div>
+        
+        <p class="text"></p>
+
+        <div class="links">
+            <a class="reply"></a>
+            <a class="retweet"></a>
+            <a class="favourite"></a>
+        </div>
+
+    </li>
+
+</ul>
+`
+
+The slider has one significant change which is that the <ul> has an ID of 'kebo-tweet-slider'.
+
