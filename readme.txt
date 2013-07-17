@@ -1,13 +1,13 @@
 === Kebo Twitter Feed ===
 Contributors: PeterBooker, lukeketley
-Tags: twitter, feeds, social,
+Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.4
 Stable tag: 0.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly, in a useful list or stylish slider.
+Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget.
 
 == Description ==
 
@@ -23,13 +23,11 @@ Developers have direct access to an object containing all the tweets, functions 
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-1. Upload `/kebo-twitter-feed/` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Then either:
-* Place the `Kebo Twitter Feed` Widget into a Widget area through the `Appearance -> Widgets` menu in WordPress.
-* More coming...
+1. Install using your WordPress Admin or upload /kebo-twitter-feed/ to the /wp-content/plugins/ directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit the Kebo Twitter menu at the bottom of your WordPress control panel.
+4. Click on the large 'Connect to Twitter' button and follow the prompts.
+5. Place the 'Kebo Twitter Feed' Widget into a Widget area through the 'Appearance -> Widgets' menu in WordPress.
 
 == Frequently Asked Questions ==
 
@@ -51,11 +49,9 @@ Another answer.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. This is the settings page for the plugin, you will need to connect your website to Twitter by clicking the 'Conntect to Twitter' button.
+2. Once you have setup a connection to Twitter, this is what the settings page should look like. You will now have access to our Widget.
+3. This is the Widget you can use to display your Twitter Feed.
 
 == Changelog ==
 
