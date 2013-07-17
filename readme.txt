@@ -15,11 +15,12 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. We prov
 
 We access your Twitter Feed through you giving permission for our Kebo Twitter App to read your Twitter Feed. Your website can then request an updated list of Tweets at any point through our OAuth request server using the credentials stored on your own site, at no point will we store and log any of your information. You can get more information regarding how we treat your data in our [Privacy Policy](http://kebopowered.com/privacy-policy/ "Kebo Privacy Policy").
 
-To ensure the reliability of the plugin, when using connections to external services to transmit data, we store the data locally in a text file. This means that if a connection is not possible at any point, we can fallback to the Tweets stored locally and continue to make requests each minute until a request is successful.
+Features include:
 
-We have provided a 'Kebo Twitter Feed' Widget to allow you to easily display the Twitter Feed on your website. You can choose between a Vertical List which fits sidebars perfectly and a Horizontal Slider which works well in sidebars and footers.
-
-Developers have direct access to an object containing all the tweets, functions to display tweets in our List and Slider, as well as other useful hooks.
+* Hassle-free Twitter API handling. We take care of the OAuth Requests for you.
+* Connect your website to Twitter in seconds with no technical knowledge required.
+* Caching used to avoid needless requests every page re-fresh.
+* Local cache backup, incase the connection to Twitter has problems.
 
 == Installation ==
 
@@ -56,41 +57,20 @@ Another answer.
 == Changelog ==
 
 = 0.15 =
-* A change since the previous version.
-* Another change.
+* Initial version.
 
-== Upgrade Notice ==
+== Documentation ==
 
-= 0.15 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
+This section is for designers or developers looking to customise the output of the plugin or access its data directly.
 
-== Arbitrary section ==
+= Developers =
 
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
+You can directly access the object containing all the Tweets like this:
 
-== A brief Markdown Example ==
+`<?php $tweets = kebo_twitter_get_tweets(); ?>`
 
-Ordered list:
+You can also
 
-1. Some feature
-1. Another feature
-1. Something else about the plugin
+= Styling the Widget =
 
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+Coming soon...
