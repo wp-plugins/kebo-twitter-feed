@@ -65,6 +65,12 @@ We store data in an option and transient, both of which are removed when you uni
 
 == Changelog ==
 
+= 0.20 =
+* Note: Improved compatibility, getting ready to make translation possible.
+* Note: Improved readme information.
+* Bug Fix: Fixed Twitter account link on plugin settings page.
+* Bug Fix: Added default settings to the Widget.
+
 = 0.15 =
 * Note: Initial version.
 
