@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.4
-Stable tag: 0.15
+Stable tag: 0.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,10 @@ Let us know in our [Support Forum](http://wordpress.org/support/plugin/kebo-twit
 = There is something cool you could add... =
 
 Fantastic, make a post on the [Support Forum](http://wordpress.org/support/plugin/kebo-twitter-feed) and let us know. We are always looking for ways to improve our plugins.
+
+= Will this plugin leave clutter in my WordPress database? =
+
+We store data in an option and transient, both of which are removed when you uninstall the plugin. No trace will be left in your database.
 
 == Screenshots ==
 

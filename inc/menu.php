@@ -43,6 +43,7 @@ function kebo_twitter_menu_render() {
                 'secret' => $_GET['secret'], // OAuth Secret
                 'account' => $account, // Screen Name
                 'userid' => $userid, // Twitter User ID
+                'account_link' => $account_link, // Twitter Account Link
             );
             
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.

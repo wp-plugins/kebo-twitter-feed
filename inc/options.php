@@ -28,7 +28,7 @@ function kebo_twitter_options_init() {
     function kebo_twitter_connection_render() {
         ?>
 
-        <p><?php echo __("To enable us to read your Twitter Feed you must connect your Twitter account to our Twitter Application by clicking on the large 'Connect to Twitter' button below.", 'kebo_twitter'); ?></p>
+        <p><?php _e("To enable us to read your Twitter Feed you must connect your Twitter account to our Twitter Application by clicking on the large 'Connect to Twitter' button below.", 'kebo_twitter'); ?></p>
 
         <?php if (false === ( $twitter_data = get_transient('kebo_twitter_connection') )) : ?>
 
@@ -37,7 +37,7 @@ function kebo_twitter_options_init() {
         <?php else : ?>
 
             <a class="social-link twitter" href="#"><i class="icon-twitter"></i><?php echo __('Connected to Twitter', 'kebo_twitter'); ?></a><br>
-            <p><?php echo __('Connected as', 'kebo_twitter'); ?> <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a> <a class="disconnect" title="Disconnect Service" href="<?php echo admin_url('admin.php?page=kebo-twitter&reset=true') ?>">&#10006;</a></p>
+            <p><?php _e('Connected as', 'kebo_twitter'); ?> <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a> <a class="disconnect" title="Disconnect Service" href="<?php echo admin_url('admin.php?page=kebo-twitter&reset=true') ?>">&#10006;</a></p>
 
         <?php endif; ?>
 

@@ -70,12 +70,12 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         ?>
         
         <label for="<?php echo $this->get_field_id('title'); ?>">
-            <p><?php echo __('Title', 'kebo_twitter'); ?>: <input style="width: 100%;" type="text" value="<?php echo $instance['title']; ?>" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>"></p>
+            <p><?php _e('Title', 'kebo_twitter'); ?>: <input style="width: 100%;" type="text" value="<?php echo $instance['title']; ?>" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>"></p>
         </label>
 
         <label for="<?php echo $this->get_field_id('style'); ?>">
             <p>
-                <?php echo __('Style', 'kebo_twitter'); ?>:
+                <?php _e('Style', 'kebo_twitter'); ?>:
                 <select id="<?php echo $this->get_field_id('style') ?>" name="<?php echo $this->get_field_name('style'); ?>">
                     <option value="1" <?php if ( 1 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php echo __('Vertical List', 'kebo_twitter'); ?></option>
                     <option value="2" <?php if ( 2 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php echo __('Slider', 'kebo_twitter'); ?></option>
@@ -85,16 +85,16 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
 
         <label for="<?php echo $this->get_field_id('theme'); ?>">
             <p>
-                <?php echo __('Theme', 'kebo_twitter'); ?>:
+                <?php _e('Theme', 'kebo_twitter'); ?>:
                 <select style="width: 108px;" id="<?php echo $this->get_field_id('theme') ?>" name="<?php echo $this->get_field_name('theme'); ?>">
-                    <option value="light" <?php if ( 'light' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php echo __('Light', 'kebo_twitter'); ?></option>
-                    <option value="dark" <?php if ( 'dark' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php echo __('Dark', 'kebo_twitter'); ?></option>
+                    <option value="dark" <?php if ( 'dark' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php _e('Dark', 'kebo_twitter'); ?></option>
+                    <option value="light" <?php if ( 'light' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php _e('Light', 'kebo_twitter'); ?></option>
                 </select>
             </p>
         </label>
 
         <label for="<?php echo $this->get_field_id('count'); ?>">
-            <p><?php echo __('Number Of Tweets', 'kebo_twitter'); ?>: <input style="width: 28px;" type="text" value="<?php echo $count; ?>" name="<?php echo $this->get_field_name('count'); ?>" id="<?php echo $this->get_field_id('count'); ?>"><span> <?php echo __('Range 1-50', 'kebo_twitter') ?></span></p>
+            <p><?php _e('Number Of Tweets', 'kebo_twitter'); ?>: <input style="width: 28px;" type="text" value="<?php echo $count; ?>" name="<?php echo $this->get_field_name('count'); ?>" id="<?php echo $this->get_field_id('count'); ?>"><span> <?php _e('Range 1-50', 'kebo_twitter') ?></span></p>
         </label>
 
         <?php
