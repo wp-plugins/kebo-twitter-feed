@@ -7,11 +7,11 @@ Stable tag: 0.21
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget.
+Your Twitter Feed without creating your own Twitter App.
 
 == Description ==
 
-Hassle-free and user-friendly way to add a Twitter Feed to your website. We provide a custom Widget to help you display the Twitter Feed on your website, as well as direct access to the data for developers.
+Hassle-free and user-friendly way to add a Twitter Feed to your website. We provide a custom Widget to help you display the Twitter Feed on your website, as well as direct access to the data for developers to use as they wish.
 
 = Why use Kebo Twitter Feed? =
 
