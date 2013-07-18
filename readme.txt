@@ -13,19 +13,19 @@ Connect your site to your Twitter account and display your Twitter Feed on your 
 
 Hassle-free and user-friendly way to add a Twitter Feed to your website. We provide a custom Widget to help you display the Twitter Feed on your website, as well as direct access to the data for developers.
 
-We access your feed by you giving permission for our Twitter App to read your public feed. Your website can then request an updated list of Tweets at any point, through our OAuth request server, using the credentials stored on your own site. At no point will we store and log any of your information on our system. You can get more information regarding how we treat your data in our [privacy policy](http://kebopowered.com/privacy-policy/ "Kebo Privacy Policy").
-
 = Why use Kebo Twitter Feed? =
 
 Other solutions usually require you to create a Twitter App and provide the plugin with OAuth credentials yourself. Our hassle-free solution takes care of all the complex OAuth requests for you. In a few clicks you can have your Twitter Feed displayed on your site.
 
+We make this so easy by managing all the complex OAuth requests on our own server using our own Twitter app. Our app only asks for read permission and we only ever request publically available information. Your data is never stored on our system and you can read more about how we treat your information in our [privacy policy](http://kebopowered.com/privacy-policy/#social-connections "Kebo Privacy Policy").
+
 = Features =
 
-* Hassle-free Twitter API handling. We take care of the OAuth Requests for you.
+* Hassle-free Twitter API handling. We take care of the OAuth requests for you.
 * Connect your website to Twitter in seconds with no technical knowledge required.
-* Caching used to avoid needless requests every page re-fresh.
+* Handy Widget to display your feed in seconds.
+* Caching is used to avoid needless requests every page refresh.
 * Local cache backup, in case the connection to Twitter has problems.
-* Handy Widget to display your feed easily.
 
 = Rate Us / Feedback =
 
