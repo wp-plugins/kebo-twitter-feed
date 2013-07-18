@@ -17,7 +17,7 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. We prov
 
 Other solutions usually require you to create a Twitter App and provide the plugin with OAuth credentials yourself. Our hassle-free solution takes care of all the complex OAuth requests for you. In a few clicks you can have your Twitter Feed displayed on your site.
 
-We make this so easy by managing all the complex OAuth requests on our own server using our own Twitter app. Our app only asks for read permission and we only ever request publically available information. Your data is never stored on our system and you can read more about how we treat your information in our [privacy policy](http://kebopowered.com/privacy-policy/#social-connections "Kebo Privacy Policy").
+We make this so easy by managing all the complex OAuth requests on our own server using our Twitter app. Our app only asks for read permission and we only ever request publically available information. Your data is never stored on our system and you can read more about how we treat your information in our [privacy policy](http://kebopowered.com/privacy-policy/#social-connections "Kebo Privacy Policy").
 
 = Features =
 
@@ -70,6 +70,7 @@ We store data in an option and transient, both of which are removed when you uni
 1. This is the settings page for the plugin, you will need to connect your website to Twitter by clicking the 'Conntect to Twitter' button.
 2. Once you have setup a connection to Twitter, this is what the settings page should look like. You will now have access to our Widget.
 3. This is the Widget you can use to display your Twitter Feed.
+4. The Widget in action on the new theme 'Twenty Thirteen' coming in WordPress 3.6.
 
 == Changelog ==
 
