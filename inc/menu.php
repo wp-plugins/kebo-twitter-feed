@@ -50,12 +50,14 @@ function kebo_twitter_menu_render() {
             set_transient('kebo_twitter_connection', $data, 10 * YEAR_IN_SECONDS);
             
             // Let user know we successfully received and stored their credentials.
-            // TODO: Add error checking and message.
-            ?>
-            <div class="updated">
-                <p><?php echo __( 'Connection established with Twitter.', 'kebo_twitter' ); ?></p>
-            </div>
-            <?php
+            // TODO: Add error checking.
+            add_settings_error(
+                'kebo_twitter_connection',
+                esc_attr('settings_updated'),
+                __('Connection established with Twitter.', 'kebo_twitter'),
+                'updated'
+            );
+
         endif;
 
         // Check for reset request, if set delete transient which will break the connection to Twitter, so the credentials will be lost.
@@ -64,11 +66,14 @@ function kebo_twitter_menu_render() {
             if ( 'true' == $_GET['reset'] ) :
 
                 delete_transient( 'kebo_twitter_connection' );
-                ?>
-                <div class="updated">
-                    <p><?php echo __( 'Connection reset to Twitter.', 'kebo_twitter' ); ?></p>
-                </div>
-                <?php
+            
+                add_settings_error(
+                    'kebo_twitter_connection_reset',
+                    esc_attr('settings_updated'),
+                    __( 'Connection reset to Twitter.', 'kebo_twitter' ),
+                    'updated'
+                );
+                
             endif;
 
         endif;
@@ -77,7 +82,7 @@ function kebo_twitter_menu_render() {
     <div class="wrap">
         
         <?php screen_icon('options-general'); ?>
-        <h2><?php echo __('Twitter Feed', 'kebo_twitter'); ?></h2>
+        <h2><?php _e('Twitter Feed', 'kebo_twitter'); ?></h2>
             <?php settings_errors(); ?>
 
         <form method="post" action="options.php">

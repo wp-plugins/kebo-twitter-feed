@@ -32,12 +32,12 @@ function kebo_twitter_options_init() {
 
         <?php if (false === ( $twitter_data = get_transient('kebo_twitter_connection') )) : ?>
 
-            <a class="social-link twitter disabled" href="http://auth.kebopowered.com/twitterread/?origin=<?php echo admin_url('admin.php?page=kebo-twitter') ?>"><i class="icon-twitter"></i>Connect to Twitter</a>
+            <a class="social-link twitter disabled" href="http://auth.kebopowered.com/twitterread/?origin=<?php echo admin_url('admin.php?page=kebo-twitter') ?>"><?php _e('Connect to Twitter', 'kebo_twitter'); ?></a>
 
         <?php else : ?>
 
-            <a class="social-link twitter" href="#"><i class="icon-twitter"></i><?php echo __('Connected to Twitter', 'kebo_twitter'); ?></a><br>
-            <p><?php _e('Connected as', 'kebo_twitter'); ?> <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a> <a class="disconnect" title="Disconnect Service" href="<?php echo admin_url('admin.php?page=kebo-twitter&reset=true') ?>">&#10006;</a></p>
+            <a class="social-link twitter" href="#"><?php _e('Connected to Twitter', 'kebo_twitter'); ?></a><br>
+            <p><?php _e('Connected as', 'kebo_twitter'); ?> <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a> <a class="disconnect" title="<?php _e('Disconnect Service', 'kebo_twitter'); ?>" href="<?php echo admin_url('admin.php?page=kebo-twitter&reset=true') ?>">&#10006;</a></p>
 
         <?php endif; ?>
 
@@ -93,11 +93,11 @@ function kebo_twitter_radio_buttons() {
     $kebo_twitter_radio_buttons = array(
         'yes' => array(
             'value' => 'yes',
-            'label' => __('On', 'kebo')
+            'label' => __('On', 'kebo_twitter')
         ),
         'no' => array(
             'value' => 'no',
-            'label' => __('Off', 'kebo')
+            'label' => __('Off', 'kebo_twitter')
         ),
     );
 
@@ -113,7 +113,7 @@ function kebo_twitter_cache_timer_render() {
     ?>
     <input style="width: 26px;" type="text" name="kebo_twitter_options[kebo_twitter_cache_timer]" id="kebo_twitter_cache_timer" value="<?php echo esc_attr($options['kebo_twitter_cache_timer']); ?>" />
     <label class="description" for="kebo_twitter_cache_timer"><?php _e('Minutes. Should be between 5 and 60.', 'kebo_twitter'); ?></label>
-    <p><?php echo __('This controls how frequently we update the stored list of Tweets for display on your website.', 'kebo_twitter'); ?></p>
+    <p><?php _e('This controls how frequently we update the stored list of Tweets for display on your website.', 'kebo_twitter'); ?></p>
     <?php
 }
 

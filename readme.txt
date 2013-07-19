@@ -107,6 +107,27 @@ This function checks the cache and refreshes the data if needed. Then returns th
 <?php endforeach; ?>
 `
 
+== What data is available? ==
+
+The object we store contains everything that the Twitter API returns, leaving what you use in your control. Below are some of the most useful items:
+
+`
+$tweet->id_str // Tweet ID
+$tweet->created_at // Date/Time created
+$tweet->text // The content text (text URLs already converted into HTML links)
+$tweet->user->id_str // Author ID
+$tweet->user->name // Author display name
+$tweet->user->screen_name // Author screen name
+$tweet->user->location // Author location
+$tweet->user->description // Author description
+$tweet->user->followers_count // Author followers count
+$tweet->user->friends_count // Author friends count
+$tweet->user->profile_image_url // Authors profile image URL
+$tweet->user->profile_image_url_https // Authors profile image URL (with HTTPS)
+`
+
+There are many ways you could use this information for more than just a Twitter Feed. For example you could also use this to track the follower count of your Twitter account for display on your website.
+
 == Styling the Widget ==
 
 We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
