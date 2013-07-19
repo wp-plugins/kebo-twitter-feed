@@ -70,7 +70,8 @@ We store data in an option and transient, both of which are removed when you uni
 1. This is the settings page for the plugin, you will need to connect your website to Twitter by clicking the 'Conntect to Twitter' button.
 2. Once you have setup a connection to Twitter, this is what the settings page should look like. You will now have access to our Widget.
 3. This is the Widget you can use to display your Twitter Feed.
-4. The Widget in action on the new theme 'Twenty Thirteen' coming in WordPress 3.6.
+4. The Widget in action on the soon to be released theme 'Twenty Thirteen' coming in the next major WordPress update.
+5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
 
