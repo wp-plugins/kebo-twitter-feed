@@ -7,7 +7,7 @@ Stable tag: 0.21
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Your Twitter Feed without creating your own Twitter App.
+The easiest way to add a great looking Twitter feed to your website.
 
 == Description ==
 
