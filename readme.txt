@@ -41,6 +41,12 @@ Please take the time to let us and others know about your experiences by leaving
 
 == Frequently Asked Questions ==
 
+= Why should I use Kebo Twitter Feed? =
+
+It is significantly easier to use than other plugins. We no not require that you create your own developer application at Twitter and then copy your credentials across to the plugin options. We skip this step by providing access to our own Twitter App allowing you to get started in just a few clicks.
+
+We also make good use of inbuilt WordPress functions for caching and compatibility. Meaning that our plugin functions efficiently and has no server requires above what WordPress itself uses, making is safe to use on any site.
+
 = How do you get my Twitter Feed? =
 
 We provide a connection from your website to your Twitter feed using our Kebo Twitter App, using OAuth2. Once you grant permission for us to read your Twitter Feed we can provide your website with this information.
