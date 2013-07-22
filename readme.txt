@@ -81,12 +81,7 @@ We store data in an option and transient, both of which are removed when you uni
 
 == Changelog ==
 
-= Coming Soon =
-* Note: Localisation is in testing. Working on a German release to begin with.
-* New Feature: Improved caching system, which will refresh the cache after page load, making no impact on page load speed even while refreshing the cache.
-* New Feature: Shortcode and Function to output the Twitter Feed directly without using the Widget.
-
-= 0.25 (current) =
+= 0.25 =
 * New Feature: Added option to show profile image to the Widget.
 * New Feature: Added option to show time since the Tweet to the Widget (e.g. 2 hours ago).
 * New Feature: Made the local cache file tied to blog ID, making the plugin multisite compatible.
