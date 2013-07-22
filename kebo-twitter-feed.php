@@ -1,9 +1,9 @@
 <?php
 /*
- * Plugin Name: Kebo - Twitter Feed
- * Plugin URI: http://kebopowered.com/plugins/twitter-feed/
- * Description: Allows you to display your Twitter feed on your website, by connection your Twitter account to the Kebo Twitter App using oAuth2.
- * Version: 0.20
+ * Plugin Name: Kebo Twitter Feed
+ * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
+ * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
+ * Version: 0.25
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if ( !defined( 'ABSPATH' ) )
     exit;
 
 if ( !defined('KEBO_TWITTER_PLUGIN_VERSION' ) )
-    define( 'KEBO_TWITTER_PLUGIN_VERSION', '0.20' );
+    define( 'KEBO_TWITTER_PLUGIN_VERSION', '0.25' );
 if ( !defined( 'KEBO_TWITTER_PLUGIN_URL' ) )
     define( 'KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__) );
 if ( !defined( 'KEBO_TWITTER_PLUGIN_PATH' ))
@@ -74,4 +74,4 @@ endif;
 * ToDo List
 */
 
-// @todo Add Uninstall Function to remove DB data, if any is added.
+
