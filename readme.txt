@@ -45,7 +45,7 @@ Please take the time to let us and others know about your experiences by leaving
 
 It is significantly easier to use than other plugins. We no not require that you create your own developer application at Twitter and then copy your credentials across to the plugin options. We skip this step by providing access to our own Twitter App allowing you to get started in just a few clicks.
 
-We also make good use of inbuilt WordPress functions for caching and compatibility. Meaning that our plugin functions efficiently and has no server requirements above those which WordPress itself uses, making is safe to use on any site.
+We also make good use of inbuilt WordPress functions for caching and compatibility. Meaning that our plugin functions efficiently and has no hosting requirements above those which WordPress itself uses, making it safe to use on any site.
 
 = How do you get my Twitter Feed? =
 
@@ -80,6 +80,21 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= Coming Soon =
+* Note: Localisation is in testing. Working on a German release to begin with.
+* New Feature: Improved caching system, which will refresh the cache after page load, making no impact on page load speed even while refreshing the cache.
+* New Feature: Shortcode and Function to output the Twitter Feed directly without using the Widget.
+
+= 0.25 (current) =
+* New Feature: Added option to show profile image to the Widget.
+* New Feature: Added option to show time since the Tweet to the Widget (e.g. 2 hours ago).
+* New Feature: Made the local cache file tied to blog ID, making the plugin multisite compatible.
+* Bug Fix: Date format fix (03rd to 3rd).
+* Bug Fix: CSS fix - to ensure action links (reply, retweet, favorite) don't resize and break use of the sprite image.
+* Bug Fix: CSS fix - to ensure links inside the content text display as expected.
+* Bug Fix: Removed Widget code from the view files paving the way for directing outputting the Twitter Feed using a shortcode or the function directly - coming soon.
+* Note: Adjusted Theme option usage, Light now fits light background sites and Dark fits dark background sites. Current users will see no difference to the display.
 
 = 0.21 =
 * Bug Fix: Fixed incompatibility with older versions of PHP.
