@@ -84,6 +84,7 @@ We store data in an option and transient, both of which are removed when you uni
 
 = 0.26 =
 * Bug Fix: Changed how we request your Tweets, now using User ID instead of Screen Name.
+* New Feature: Added a link to the plugin data on the Plugins screen, for direct access to the settings page.
 
 = 0.25 =
 * New Feature: Added option to show profile image to the Widget.
