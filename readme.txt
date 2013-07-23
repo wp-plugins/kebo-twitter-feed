@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.5.2
-Stable tag: 0.25
+Stable tag: 0.26
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ We make this so easy by managing all the complex OAuth requests on our own serve
 * Hassle-free Twitter API handling. We take care of the OAuth requests for you.
 * Connect your website to Twitter in seconds with no technical knowledge required.
 * Handy Widget to display your feed in seconds.
+* Can display profile image with Tweets.
 * Caching is used to avoid needless requests every page refresh.
 * Local cache backup, in case the connection to Twitter has problems.
 
@@ -80,6 +81,9 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.26 =
+* Bug Fix: Changed how we request your Tweets, now using User ID instead of Screen Name.
 
 = 0.25 =
 * New Feature: Added option to show profile image to the Widget.

@@ -33,17 +33,13 @@ function kebo_twitter_menu_render() {
     // Collect returned OAuth2 credentials on callback and save in a transient.
     if (isset($_GET['service']) && isset($_GET['token'])) :
 
-            $userid = $_GET['userid'];
-            $account = $_GET['account'];
-            $account_link = $_GET['account_link'];
-
             $data = array(
                 'service' => $_GET['service'],
                 'token' => $_GET['token'], // OAuth Token
                 'secret' => $_GET['secret'], // OAuth Secret
-                'account' => $account, // Screen Name
-                'userid' => $userid, // Twitter User ID
-                'account_link' => $account_link, // Twitter Account Link
+                'account' => $_GET['account'], // Screen Name
+                'userid' => $_GET['userid'], // Twitter User ID
+                'account_link' => $_GET['account_link'], // Twitter Account Link
             );
             
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.
