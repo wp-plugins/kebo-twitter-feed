@@ -45,6 +45,9 @@ function kebo_twitter_menu_render() {
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.
             set_transient('kebo_twitter_connection', $data, 10 * YEAR_IN_SECONDS);
             
+            // On Successful Connection, Fetch Tweets.
+            kebo_twitter_get_tweets();
+            
             // Let user know we successfully received and stored their credentials.
             // TODO: Add error checking.
             add_settings_error(
