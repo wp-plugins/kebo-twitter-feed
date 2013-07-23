@@ -33,29 +33,27 @@ function kebo_twitter_menu_render() {
     // Collect returned OAuth2 credentials on callback and save in a transient.
     if (isset($_GET['service']) && isset($_GET['token'])) :
 
-            $userid = $_GET['userid'];
-            $account = $_GET['account'];
-            $account_link = $_GET['account_link'];
-
             $data = array(
                 'service' => $_GET['service'],
                 'token' => $_GET['token'], // OAuth Token
                 'secret' => $_GET['secret'], // OAuth Secret
-                'account' => $account, // Screen Name
-                'userid' => $userid, // Twitter User ID
-                'account_link' => $account_link, // Twitter Account Link
+                'account' => $_GET['account'], // Screen Name
+                'userid' => $_GET['userid'], // Twitter User ID
+                'account_link' => $_GET['account_link'], // Twitter Account Link
             );
             
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.
             set_transient('kebo_twitter_connection', $data, 10 * YEAR_IN_SECONDS);
             
             // Let user know we successfully received and stored their credentials.
-            // TODO: Add error checking and message.
-            ?>
-            <div class="updated">
-                <p><?php echo __( 'Connection established with Twitter.', 'kebo_twitter' ); ?></p>
-            </div>
-            <?php
+            // TODO: Add error checking.
+            add_settings_error(
+                'kebo_twitter_connection',
+                esc_attr('settings_updated'),
+                __('Connection established with Twitter.', 'kebo_twitter'),
+                'updated'
+            );
+
         endif;
 
         // Check for reset request, if set delete transient which will break the connection to Twitter, so the credentials will be lost.
@@ -64,11 +62,14 @@ function kebo_twitter_menu_render() {
             if ( 'true' == $_GET['reset'] ) :
 
                 delete_transient( 'kebo_twitter_connection' );
-                ?>
-                <div class="updated">
-                    <p><?php echo __( 'Connection reset to Twitter.', 'kebo_twitter' ); ?></p>
-                </div>
-                <?php
+            
+                add_settings_error(
+                    'kebo_twitter_connection_reset',
+                    esc_attr('settings_updated'),
+                    __( 'Connection reset to Twitter.', 'kebo_twitter' ),
+                    'updated'
+                );
+                
             endif;
 
         endif;
@@ -77,7 +78,7 @@ function kebo_twitter_menu_render() {
     <div class="wrap">
         
         <?php screen_icon('options-general'); ?>
-        <h2><?php echo __('Twitter Feed', 'kebo_twitter'); ?></h2>
+        <h2><?php _e('Twitter Feed', 'kebo_twitter'); ?></h2>
             <?php settings_errors(); ?>
 
         <form method="post" action="options.php">

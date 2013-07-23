@@ -19,6 +19,7 @@ function kebo_twitter_get_tweets() {
         'account' => $twitter_data['account'], // Screen Name
         'token' => $twitter_data['token'], // OAuth Token
         'secret' => $twitter_data['secret'], // OAuth Secret
+        'userid' => $twitter_data['userid'], // User ID
     );
     
     // Setup arguments for POST request.
@@ -52,7 +53,7 @@ function kebo_twitter_get_tweets() {
         /*
          * On error use data from cache file.
          */
-        $tweets = json_decode( file_get_contents( KEBO_TWITTER_PLUGIN_PATH . 'data/cache.json' ) );
+        $tweets = json_decode( file_get_contents( KEBO_TWITTER_PLUGIN_PATH . 'data/cache-blog-' . get_current_blog_id() . '.json' ) );
         
         // Set low refresh time on failed request
         set_transient( 'kebo_twitter_feed', $tweets, 60 );
@@ -68,14 +69,14 @@ function kebo_twitter_get_tweets() {
         foreach ($tweets as $tweet) :
             
             // Turn all text URLs into HTML links.
-            $tweet->text = preg_replace( '/http:\/\/([a-z0-9_\.\-\+\&\!\#\~\/\,]+)/i', '<a href="http://$1" target="_blank">http://$1</a>', $tweet->text );
-            
+            $tweet->text = apply_filters('kebo-twitter-text', preg_replace( '/http:\/\/([a-z0-9_\.\-\+\&\!\#\~\/\,]+)/i', '<a href="http://$1" target="_blank">http://$1</a>', $tweet->text ) );
+
         endforeach;
         
         /*
          * Then save to cache file in JSON format.
          */
-        $file = fopen( KEBO_TWITTER_PLUGIN_PATH . 'data/cache.json', 'w' );
+        $file = fopen( KEBO_TWITTER_PLUGIN_PATH . 'data/cache-blog-' . get_current_blog_id() . '.json', 'w' );
         fwrite( $file, json_encode( $tweets ) );
         fclose( $file );
         
@@ -84,6 +85,7 @@ function kebo_twitter_get_tweets() {
         
     }
     
+    unset($twitter_data);
     unset($options);
     
     // Return Tweets Object.
