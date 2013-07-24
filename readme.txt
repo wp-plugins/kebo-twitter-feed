@@ -15,6 +15,14 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. We prov
 
 = Why use Kebo Twitter Feed? =
 
+* Get started in just a few clicks. No setting up your own Twitter App.
+
+* Compatible with any WordPress hosting.
+
+* Advanced caching, discreetly caches in the background after page load.
+
+* Completely Multisite compatible.
+
 Other solutions usually require you to create a Twitter App and provide the plugin with OAuth credentials yourself. Our hassle-free solution takes care of all the complex OAuth requests for you. In a few clicks you can have your Twitter Feed displayed on your site.
 
 We make this so easy by managing all the complex OAuth requests on our own server using our Twitter app. Our app only asks for read permission and we only ever request publically available information. Your data is never stored on our system and you can read more about how we treat your information in our [privacy policy](http://kebopowered.com/privacy-policy/#social-connections "Kebo Privacy Policy").
