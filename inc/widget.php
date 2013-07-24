@@ -84,8 +84,13 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         // Add default Tweet count of 5, to avoid none being set.
         $count = ($instance['count']) ? $instance['count'] : 5;
         
-        // Display timeago by default.
+        // Add defaults.
         if ( !isset( $instance['timeago'] ) ? $instance['timeago'] = 'timeago' : '' )
+        if ( !isset( $instance['avatar'] ) ? $instance['avatar'] = '' : '' )
+        if ( !isset( $instance['style'] ) ? $instance['style'] = 1 : '' )
+        if ( !isset( $instance['theme'] ) ? $instance['theme'] = 'light' : '' )
+        if ( !isset( $instance['title'] ) ? $instance['title'] = '' : '' )
+            
         ?>
         
         <label for="<?php echo $this->get_field_id('title'); ?>">
