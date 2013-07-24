@@ -88,6 +88,7 @@ We store data in an option and transient, both of which are removed when you uni
 * New Feature: New Advanced Silent Cache. New system refreshes the cache in the background, after page load. Meaning there is no impact on page load speed while refreshing data.
 * Bug Fix: Fixed duplicated 'Settings saved.' message on the plugin settings page.
 * Bug Fix: Fixed call to un-install script, so that the code runs correctly.
+* Bug Fix: Fixed errors in the Widget options when you first create one.
 
 = 0.26 =
 * Bug Fix: Changed how we request your Tweets, now using User ID instead of Screen Name.
