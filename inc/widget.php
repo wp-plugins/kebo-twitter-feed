@@ -36,8 +36,6 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
      */
     function widget($args, $instance) {
         
-        timer_start();
-        
         extract($args, EXTR_SKIP);
         
         /*
@@ -55,6 +53,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             echo $before_title;
             echo $instance['title'];
             echo $after_title;
+            
         }
         
         /*
@@ -72,8 +71,6 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         
         // Output closing Widget HTML
         echo $after_widget;
-        
-        timer_stop(1); echo ' seconds';
         
     }
 
