@@ -85,11 +85,16 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         $count = ($instance['count']) ? $instance['count'] : 5;
         
         // Add defaults.
-        if ( !isset( $instance['timeago'] ) ? $instance['timeago'] = 'timeago' : '' )
-        if ( !isset( $instance['avatar'] ) ? $instance['avatar'] = '' : '' )
-        if ( !isset( $instance['style'] ) ? $instance['style'] = 1 : '' )
-        if ( !isset( $instance['theme'] ) ? $instance['theme'] = 'light' : '' )
-        if ( !isset( $instance['title'] ) ? $instance['title'] = '' : '' )
+        if( !isset( $instance['timeago'] ) )
+            $instance['timeago'] = 'timeago';
+        if( !isset( $instance['avatar'] ) )
+            $instance['avatar'] = '';
+        if( !isset( $instance['style'] ) )
+            $instance['style'] = 1;
+        if( !isset( $instance['theme'] ) )
+            $instance['theme'] = 'light';
+        if( !isset( $instance['title'] ) )
+            $instance['title'] = '';
             
         ?>
         
