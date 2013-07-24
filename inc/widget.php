@@ -6,7 +6,7 @@
 /*
  * Only register Widget if connection has been made to our Twitter App.
  */
-if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection' ) ) ) {
+if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) {
     
     add_action('widgets_init', 'kebo_twitter_register_widget');
     
@@ -36,23 +36,19 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
      */
     function widget($args, $instance) {
         
-        // For performance testing
-        //timer_start();
+        timer_start();
         
         extract($args, EXTR_SKIP);
         
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = get_transient('kebo_twitter_feed') ) ) {
-            
-            $tweets = kebo_twitter_get_tweets();
-        
-        }
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+            return;
         
         // Output opening Widget HTML
         echo $before_widget;
-
+        
         // If Title is set, output it with Widget title opening and closing HTML
         if (isset($instance['title']) && !empty($instance['title'])) {
 
@@ -77,8 +73,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         // Output closing Widget HTML
         echo $after_widget;
         
-        // Output process time
-        //timer_stop(1); echo ' seconds';
+        timer_stop(1); echo ' seconds';
         
     }
 

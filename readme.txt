@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.5.2
-Stable tag: 0.26
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,13 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.3.2 =
+* Note: Moved to a new version numbering system (internal use only).
+* New Feature: Now fully Multisite compatible, including removal of database entries on delete. Each blog can have it's own connection.
+* New Feature: New Advanced Silent Cache. New system refreshes the cache in the background, after page load. Meaning there is no impact on page load speed while refreshing data.
+* Bug Fix: Fixed duplicated 'Settings saved.' message on the plugin settings page.
+* Bug Fix: Fixed call to un-install script, so that the code runs correctly.
 
 = 0.26 =
 * Bug Fix: Changed how we request your Tweets, now using User ID instead of Screen Name.

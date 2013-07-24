@@ -43,7 +43,7 @@ function kebo_twitter_menu_render() {
             );
             
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.
-            set_transient('kebo_twitter_connection', $data, 10 * YEAR_IN_SECONDS);
+            set_transient('kebo_twitter_connection_' . get_current_blog_id(), $data, 10 * YEAR_IN_SECONDS);
             
             // On Successful Connection, Fetch Tweets.
             kebo_twitter_get_tweets();
@@ -64,7 +64,7 @@ function kebo_twitter_menu_render() {
 
             if ( 'true' == $_GET['reset'] ) :
 
-                delete_transient( 'kebo_twitter_connection' );
+                delete_transient( 'kebo_twitter_connection_' . get_current_blog_id() );
             
                 add_settings_error(
                     'kebo_twitter_connection_reset',
@@ -91,7 +91,7 @@ function kebo_twitter_menu_render() {
             submit_button();
             ?>
         </form>
-        
+
     </div>
     <?php
     

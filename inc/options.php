@@ -30,7 +30,7 @@ function kebo_twitter_options_init() {
 
         <p><?php _e("To enable us to read your Twitter Feed you must connect your Twitter account to our Twitter Application by clicking on the large 'Connect to Twitter' button below.", 'kebo_twitter'); ?></p>
 
-        <?php if (false === ( $twitter_data = get_transient('kebo_twitter_connection') )) : ?>
+        <?php if (false === ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) : ?>
 
             <a class="social-link twitter disabled" href="http://auth.kebopowered.com/twitterread/?origin=<?php echo admin_url('admin.php?page=kebo-twitter') ?>"><?php _e('Connect to Twitter', 'kebo_twitter'); ?></a>
 
@@ -53,6 +53,7 @@ function kebo_twitter_options_init() {
             'kebo-twitter', // Menu slug
             'kebo_twitter_options_general' // Settings section.
     );
+    
 }
 add_action('admin_init', 'kebo_twitter_options_init');
 
@@ -133,8 +134,6 @@ function kebo_twitter_options_validate($input) {
             if (1 <= $input['kebo_twitter_cache_timer'] && 30 >= $input['kebo_twitter_cache_timer']) {
                 
                 $output['kebo_twitter_cache_timer'] = intval($input['kebo_twitter_cache_timer']);
-                $type = 'updated';
-                $message = __( 'Successfully updated.', 'kebo_twitter' );
                 
                 // On Successful Update, Refresh Tweet List
                 kebo_twitter_get_tweets();
@@ -142,7 +141,14 @@ function kebo_twitter_options_validate($input) {
             } else {
                 
                 $type = 'error';
-                $message = __( 'Value supplied is outside of acceptable range 5-60.', 'kebo_twitter' );
+                $message = __( 'Value supplied is outside of acceptable range 1-30.', 'kebo_twitter' );
+                
+                add_settings_error(
+                    'kebo_twitter_cache_timer',
+                    esc_attr('settings_updated'),
+                    $message,
+                    $type
+                );
                 
             }
             
@@ -151,15 +157,16 @@ function kebo_twitter_options_validate($input) {
             $type = 'error';
             $message = __( 'Value supplied is not a valid number.', 'kebo_twitter' );
             
+            add_settings_error(
+                'kebo_twitter_cache_timer',
+                esc_attr('settings_updated'),
+                $message,
+                $type
+            );
+            
         }
+        
     }
-
-    add_settings_error(
-        'kebo_twitter_cache_timer',
-        esc_attr('settings_updated'),
-        $message,
-        $type
-    );
 
     return apply_filters('kebo_twitter_options_validate', $output, $options);
 }
