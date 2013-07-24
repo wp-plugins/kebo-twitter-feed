@@ -8,88 +8,54 @@
  */
 function kebo_twitter_get_tweets() {
 
-    if ( false !== ( $twitter_data = get_transient('kebo_twitter_connection') ) ) {
-    
-    // URL to Kebo OAuth Request App
-    $request_url = 'http://auth.kebopowered.com/request/index.php';
-    
-    // Setup arguments for OAuth request.
-    $data = array(
-        'service' => 'twitter',
-        'account' => $twitter_data['account'], // Screen Name
-        'token' => $twitter_data['token'], // OAuth Token
-        'secret' => $twitter_data['secret'], // OAuth Secret
-    );
-    
-    // Setup arguments for POST request.
-    $args = array(
-        'method' => 'POST',
-        'timeout' => 10,
-        'redirection' => 5,
-        'httpversion' => '1.1',
-        'blocking' => true,
-        'headers' => array(),
-        'body' => array(
-            'feed' => 'true',
-            'data' => json_encode($data),
-        ),
-        'cookies' => array(),
-        'sslverify' => false,
-    );
-    
-    // Make POST request to Kebo OAuth App.
-    $request = wp_remote_post( $request_url, $args );
-    
-    // Response is in JSON format, so decode it.
-    $response = json_decode( $request['body'] );
+    // If there is no social connection, we cannot get tweets, so return false
+    if ( false === ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) )
+        return false;
     
     // Grab the Plugin Options.
     $options = kebo_get_twitter_options();
     
-    // Check for Error or Success Response.
-    if ( isset( $response->errors )) {
+    /*
+     * Get transient and check if it has expired.
+     */
+    if ( false === ( $tweets = get_transient( 'kebo_twitter_feed_' . get_current_blog_id() ) ) ) {
         
-        /*
-         * On error use data from cache file.
-         */
-        $tweets = json_decode( file_get_contents( KEBO_TWITTER_PLUGIN_PATH . 'data/cache.json' ) );
+        // Make POST request to Kebo OAuth App.
+        $request = kebo_twitter_external_request();
+
+        // Response is in JSON format, so decode it.
+        $response = json_decode( $request['body'] );
         
-        // Set low refresh time on failed request
-        set_transient( 'kebo_twitter_feed', $tweets, 60 );
-    
-    } else {
-        
-        // We now have an object of tweets.
         $tweets = $response;
         
-        /*
-         * On successful request do some resource heavy regex, to avoid performing it on every page render.
-         */
-        foreach ($tweets as $tweet) :
+        // Check for Error or Success Response.
+        if ( isset( $response->errors )) {
             
-            // Turn all text URLs into HTML links.
-            $tweet->text = preg_replace( '/http:\/\/([a-z0-9_\.\-\+\&\!\#\~\/\,]+)/i', '<a href="http://$1" target="_blank">http://$1</a>', $tweet->text );
+            // If error, request to Twitter failed.
+            return false;
             
-        endforeach;
-        
-        /*
-         * Then save to cache file in JSON format.
-         */
-        $file = fopen( KEBO_TWITTER_PLUGIN_PATH . 'data/cache.json', 'w' );
-        fwrite( $file, json_encode( $tweets ) );
-        fclose( $file );
-        
-        // Update Transient with new data.
-        set_transient( 'kebo_twitter_feed', $tweets, $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
+        } else {
+            
+            // Add custom expiry time
+            $tweets['expiry'] = time() + ( $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
+            
+            // No error, set transient with latest Tweets
+            set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
+            
+        }
         
     }
     
-    unset($options);
+    /*
+     * Check if Twwets have soft expired (user setting), if so run refresh after page load.
+     */
+    elseif ( $tweets['expiry'] < time() ) {
+        
+        add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
+        
+    }
     
-    // Return Tweets Object.
     return $tweets;
-        
-    }
     
 }
 
@@ -148,4 +114,87 @@ function kebo_twitter_slider_script() {
         });
     </script>
     <?php
+}
+
+/*
+ * Make external request to Kebo auth script
+ */
+function kebo_twitter_external_request() {
+    
+    if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) {
+    
+    // URL to Kebo OAuth Request App
+    $request_url = 'http://auth.kebopowered.com/request/index.php';
+    
+    // Setup arguments for OAuth request.
+    $data = array(
+        'service' => 'twitter',
+        'account' => $twitter_data['account'], // Screen Name
+        'token' => $twitter_data['token'], // OAuth Token
+        'secret' => $twitter_data['secret'], // OAuth Secret
+        'userid' => $twitter_data['userid'], // User ID
+    );
+    
+    // Setup arguments for POST request.
+    $args = array(
+        'method' => 'POST',
+        'timeout' => 10,
+        'redirection' => 5,
+        'httpversion' => '1.1',
+        'blocking' => true,
+        'headers' => array(),
+        'body' => array(
+            'feed' => 'true',
+            'data' => json_encode($data),
+        ),
+        'cookies' => array(),
+        'sslverify' => false,
+    );
+    
+    // Make POST request to Kebo OAuth App.
+    $request = wp_remote_post( $request_url, $args );
+    
+    return $request;
+    
+    }
+    
+}
+
+/*
+ * Silently refreshes the cache (transient) after page has rendered.
+ */
+function kebo_twitter_refresh_cache() {
+    
+    /*
+     * If cache has already been updated, no need to refresh
+     */
+    if ( false !== ( $tweets = get_transient( 'kebo_twitter_feed_' . get_current_blog_id() ) ) )
+        if ( $tweets['expiry'] > time() )
+            return;
+    
+        // Make POST request to Kebo OAuth App.
+        $request = kebo_twitter_external_request();
+
+        // Response is in JSON format, so decode it.
+        $response = json_decode( $request['body'] );
+
+        // Check for Error or Success Response.
+        if ( isset( $response->errors )) {
+
+        // If error, request to Twitter failed.
+        // Do nothing.
+            
+    } else {
+        
+        // We have an object full of Tweets.
+        $tweets = $response;
+            
+        // Add custom expiry time
+        $tweets['expiry'] = time() + ( $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
+            
+        // No error, set transient with latest Tweets
+        set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
+            
+    }
+    
 }
