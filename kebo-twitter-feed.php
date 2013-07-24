@@ -1,9 +1,9 @@
 <?php
 /*
- * Plugin Name: Kebo - Twitter Feed
- * Plugin URI: http://kebopowered.com/plugins/twitter-feed/
- * Description: Allows you to display your Twitter feed on your website, by connection your Twitter account to the Kebo Twitter App using oAuth2.
- * Version: 0.20
+ * Plugin Name: Kebo Twitter Feed
+ * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
+ * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
+ * Version: 0.3.2
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if ( !defined( 'ABSPATH' ) )
     exit;
 
 if ( !defined('KEBO_TWITTER_PLUGIN_VERSION' ) )
-    define( 'KEBO_TWITTER_PLUGIN_VERSION', '0.20' );
+    define( 'KEBO_TWITTER_PLUGIN_VERSION', '0.3.2' );
 if ( !defined( 'KEBO_TWITTER_PLUGIN_URL' ) )
     define( 'KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__) );
 if ( !defined( 'KEBO_TWITTER_PLUGIN_PATH' ))
@@ -42,11 +42,6 @@ require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/widget.php' );
 require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/get_tweets.php' );
 
 /**
- * Register File and Function used to Delete Plugin.
- */
-register_uninstall_hook( KEBO_TWITTER_PLUGIN_PATH . 'uninstall.php', 'kebo_twitter_uninstall' );
-
-/**
  * Load Text Domain for Translations.
  */
 load_plugin_textdomain( 'kebo_twitter', false, KEBO_TWITTER_PLUGIN_PATH . 'languages/' );
@@ -71,7 +66,26 @@ if (!function_exists('kebo_twitter_plugin_scripts')):
 endif;
 
 /**
+ * Add a link to the plugin screen, to allow users to jump straight to the settings page.
+ */
+function kebo_twitter_plugin_meta($links, $file) {
+	
+	$plugin = plugin_basename(__FILE__);
+
+	// Add our custom link to the defaults.
+	if ($file == $plugin) {
+		return array_merge(
+			$links,
+			array( '<a href="' . admin_url('admin.php?page=kebo-twitter') . '">' . __('Settings') . '</a>' )
+		);
+	}
+
+	return $links;
+}
+add_filter( 'plugin_row_meta', 'kebo_twitter_plugin_meta', 10, 2 );
+
+/**
 * ToDo List
 */
 
-// @todo Add Uninstall Function to remove DB data, if any is added.
+
