@@ -89,7 +89,7 @@ We store data in an option and transient, both of which are removed when you uni
 == Changelog ==
 
 = 0.3.4 =
-* Bug Fix: Fixed unnecessary cache refreshes.
+* Bug Fix: Fixed unnecessary cache refreshes, by giving 10 seconds for each to be made.
 * Bug Fix: Fixed some styling issues reported.
 * Bug Fix: JS and CSS now only loaded on relevant pages.
 
