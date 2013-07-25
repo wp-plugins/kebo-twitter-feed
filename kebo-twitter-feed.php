@@ -3,51 +3,51 @@
  * Plugin Name: Kebo Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 0.3.4
+ * Version: 0.3.5
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
 
- // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) )
+// Exit if accessed directly
+if (!defined('ABSPATH'))
     exit;
 
-if ( !defined('KEBO_TWITTER_PLUGIN_VERSION' ) )
-    define( 'KEBO_TWITTER_PLUGIN_VERSION', '0.3.4' );
-if ( !defined( 'KEBO_TWITTER_PLUGIN_URL' ) )
-    define( 'KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__) );
-if ( !defined( 'KEBO_TWITTER_PLUGIN_PATH' ))
-    define( 'KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__) );
+if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
+    define('KEBO_TWITTER_PLUGIN_VERSION', '0.3.5');
+if (!defined('KEBO_TWITTER_PLUGIN_URL'))
+    define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
+if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
+    define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 function kebo_twitter_plugin_setup() {
 
-/**
- * Include Plugin Options.
- */
-require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/options.php' );
+    /**
+     * Include Plugin Options.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/options.php' );
 
-/**
- * Include Menu Page.
- */
-require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/menu.php' );
+    /**
+     * Include Menu Page.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/menu.php' );
 
-/**
- * Include Custom Widget.
- */
-require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/widget.php' );
+    /**
+     * Include Custom Widget.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/widget.php' );
 
-/**
- * Include Request for the Twitter Feed.
- */
-require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/get_tweets.php' );
+    /**
+     * Include Request for the Twitter Feed.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/get_tweets.php' );
 
-/**
- * Load Text Domain for Translations.
- */
-load_plugin_textdomain( 'kebo_twitter', false, KEBO_TWITTER_PLUGIN_PATH . 'languages/' );
-
+    /**
+     * Load Text Domain for Translations.
+     */
+    load_plugin_textdomain('kebo_twitter', false, KEBO_TWITTER_PLUGIN_PATH . 'languages/');
 }
-add_action( 'plugins_loaded', 'kebo_twitter_plugin_setup', 15 );
+
+add_action('plugins_loaded', 'kebo_twitter_plugin_setup', 15);
 
 if (!function_exists('kebo_twitter_plugin_scripts')):
 
@@ -55,15 +55,15 @@ if (!function_exists('kebo_twitter_plugin_scripts')):
      * Enqueue plugin scripts and styles.
      */
     function kebo_twitter_scripts() {
-            
+
         // Queues the main CSS file.
-        wp_register_style( 'kebo-twitter-plugin', KEBO_TWITTER_PLUGIN_URL . 'css/plugin.css', array(), KEBO_TWITTER_PLUGIN_VERSION, 'all' );
-        
+        wp_register_style('kebo-twitter-plugin', KEBO_TWITTER_PLUGIN_URL . 'css/plugin.css', array(), KEBO_TWITTER_PLUGIN_VERSION, 'all');
+
         // Enqueue Stylesheet for Admin Pages
-        if ( is_admin() )
-            wp_enqueue_style( 'kebo-twitter-plugin' );
-        
+        if (is_admin())
+            wp_enqueue_style('kebo-twitter-plugin');
     }
+
     add_action('wp_enqueue_scripts', 'kebo_twitter_scripts');
     add_action('admin_enqueue_scripts', 'kebo_twitter_scripts');
 
@@ -73,23 +73,83 @@ endif;
  * Add a link to the plugin screen, to allow users to jump straight to the settings page.
  */
 function kebo_twitter_plugin_meta($links, $file) {
-	
-	$plugin = plugin_basename(__FILE__);
 
-	// Add our custom link to the defaults.
-	if ($file == $plugin) {
-		return array_merge(
-			$links,
-			array( '<a href="' . admin_url('admin.php?page=kebo-twitter') . '">' . __('Settings') . '</a>' )
-		);
-	}
+    $plugin = plugin_basename(__FILE__);
 
-	return $links;
+    // Add our custom link to the defaults.
+    if ($file == $plugin) {
+        return array_merge(
+                $links, array('<a href="' . admin_url('admin.php?page=kebo-twitter') . '">' . __('Settings') . '</a>')
+        );
+    }
+
+    return $links;
 }
-add_filter( 'plugin_row_meta', 'kebo_twitter_plugin_meta', 10, 2 );
+
+add_filter('plugin_row_meta', 'kebo_twitter_plugin_meta', 10, 2);
 
 /**
-* ToDo List
-*/
+ * Adds a WordPress pointer to Kebo Twitter settings page.
+ */
+function kebo_twitter_pointer_script_style($hook_suffix) {
+
+    // Assume pointer shouldn't be shown
+    $enqueue_pointer_script_style = false;
+
+    // Get array list of dismissed pointers for current user and convert it to array
+    $dismissed_pointers = explode(',', get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
+
+    // Check if our pointer is not among dismissed ones
+    if ( !in_array('kebo_twitter_settings_pointer', $dismissed_pointers) ) {
+        $enqueue_pointer_script_style = true;
+
+        // Add footer scripts using callback function
+        add_action('admin_print_footer_scripts', 'kebo_twitter_pointer_print_scripts');
+    }
+
+    // Enqueue pointer CSS and JS files, if needed
+    if ($enqueue_pointer_script_style) {
+        wp_enqueue_style('wp-pointer');
+        wp_enqueue_script('wp-pointer');
+    }
+}
+
+add_action('admin_enqueue_scripts', 'kebo_twitter_pointer_script_style');
+
+function kebo_twitter_pointer_print_scripts() {
+
+    $pointer_content = '<h3>' . __('Connect to your Twitter Account', 'kebo_twitter') . '</h3>';
+    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your Latest Tweets.', 'kebo_twitter') . '</p>';
+    ?>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        jQuery(document).ready(function($) {
+            $('#toplevel_page_kebo-twitter').pointer({
+                content: '<?php echo $pointer_content; ?>',
+                position: {
+                    edge: 'left', // arrow direction
+                    align: 'center' // vertical alignment
+                },
+                pointerWidth: 350,
+                close: function() {
+                    $.post(ajaxurl, {
+                        pointer: 'kebo_twitter_settings_pointer', // pointer ID
+                        action: 'dismiss-wp-pointer'
+                    });
+                }
+            }).pointer('open');
+        });
+        //]]>
+    </script>
+
+    <?php
+}
 
 
+/**
+ * ToDo List
+ * 
+ * 1. Re-write custom Slider/Fader javascript. Extending features e.g. pause on hover, speed, etc.
+ * 
+ */
