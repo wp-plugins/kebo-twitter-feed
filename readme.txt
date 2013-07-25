@@ -90,6 +90,7 @@ We store data in an option and transient, both of which are removed when you uni
 
 = 0.3.3 =
 * Bug Fix: Fixed wrong variable name used in Widget form.
+* Bug Fix: Small styling fixes to improve integration with Themes.
 
 = 0.3.2 =
 * Note: Moved to a new version numbering system (internal use only).
