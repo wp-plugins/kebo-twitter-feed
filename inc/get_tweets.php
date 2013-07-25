@@ -96,6 +96,7 @@ function kebo_twitter_print_js() {
 function kebo_twitter_slider_script() {
     ?>
     <script type="text/javascript">
+        //<![CDATA[
         jQuery(document).ready(function() {
 
             jQuery('#kebo-tweet-slider .tweet').eq(0).fadeToggle('1000').delay(10500).fadeToggle('1000');
@@ -119,6 +120,7 @@ function kebo_twitter_slider_script() {
             }
 
         });
+        //]]>
     </script>
     <?php
 }
