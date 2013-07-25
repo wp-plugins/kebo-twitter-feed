@@ -19,6 +19,7 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. We prov
 * Compatible with any WordPress hosting.
 * Advanced caching, discreetly caches in the background after page load.
 * Completely Multisite compatible.
+* WordPress 3.6 compatible.
 
 Other solutions usually require you to create a Twitter App and provide the plugin with OAuth credentials yourself. Our hassle-free solution takes care of all the complex OAuth requests for you. In a few clicks you can have your Twitter Feed displayed on your site.
 
