@@ -51,6 +51,13 @@ function kebo_twitter_get_tweets() {
      */
     elseif ( $tweets['expiry'] < time() ) {
         
+        // Add 10 seconds to soft expire, to stop other threads trying to update it at the same time.
+        $tweets['expiry'] = ( $tweets['expiry'] + 10 );
+            
+        // Update soft expire time.
+        set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
+        
+        // Set silent cache to refresh after page load.
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
@@ -188,13 +195,13 @@ function kebo_twitter_refresh_cache() {
         
         // We have an object full of Tweets.
         $tweets = $response;
-            
+        
         // Add custom expiry time
         $tweets['expiry'] = time() + ( $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
-            
+        
         // No error, set transient with latest Tweets
         set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
-            
+        
     }
     
 }
