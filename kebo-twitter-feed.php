@@ -3,7 +3,7 @@
  * Plugin Name: Kebo Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 0.3.5
+ * Version: 0.4.0
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '0.3.5');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '0.4.0');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -45,8 +45,8 @@ function kebo_twitter_plugin_setup() {
      * Load Text Domain for Translations.
      */
     load_plugin_textdomain('kebo_twitter', false, KEBO_TWITTER_PLUGIN_PATH . 'languages/');
+    
 }
-
 add_action('plugins_loaded', 'kebo_twitter_plugin_setup', 15);
 
 if (!function_exists('kebo_twitter_plugin_scripts')):
@@ -63,7 +63,6 @@ if (!function_exists('kebo_twitter_plugin_scripts')):
         if (is_admin())
             wp_enqueue_style('kebo-twitter-plugin');
     }
-
     add_action('wp_enqueue_scripts', 'kebo_twitter_scripts');
     add_action('admin_enqueue_scripts', 'kebo_twitter_scripts');
 
@@ -79,13 +78,12 @@ function kebo_twitter_plugin_meta($links, $file) {
     // Add our custom link to the defaults.
     if ($file == $plugin) {
         return array_merge(
-                $links, array('<a href="' . admin_url('admin.php?page=kebo-twitter') . '">' . __('Settings') . '</a>')
+                $links, array('<a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Settings') . '</a>')
         );
     }
 
     return $links;
 }
-
 add_filter('plugin_row_meta', 'kebo_twitter_plugin_meta', 10, 2);
 
 /**
@@ -113,19 +111,18 @@ function kebo_twitter_pointer_script_style($hook_suffix) {
         wp_enqueue_script('wp-pointer');
     }
 }
-
 add_action('admin_enqueue_scripts', 'kebo_twitter_pointer_script_style');
 
 function kebo_twitter_pointer_print_scripts() {
 
     $pointer_content = '<h3>' . __('Connect to your Twitter Account', 'kebo_twitter') . '</h3>';
-    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your Latest Tweets.', 'kebo_twitter') . '</p>';
+    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your Latest Tweets.', 'kebo_twitter') . ' <a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Get Started Now', 'kebo_twitter') . '</a></p>';
     ?>
 
     <script type="text/javascript">
         //<![CDATA[
         jQuery(document).ready(function($) {
-            $('#toplevel_page_kebo-twitter').pointer({
+            $('#menu-settings').pointer({
                 content: '<?php echo $pointer_content; ?>',
                 position: {
                     edge: 'left', // arrow direction
@@ -146,6 +143,72 @@ function kebo_twitter_pointer_print_scripts() {
     <?php
 }
 
+/*
+ * Outputs Slider Javascript
+ * Shows a single tweet at a time, fading between them.
+ */
+function kebo_twitter_slider_script() {
+    
+    ?>
+    <script type="text/javascript">
+        //<![CDATA[
+        jQuery(document).ready(function() {
+
+            jQuery('#kebo-tweet-slider .tweet').eq(0).fadeToggle('1000').delay(10500).fadeToggle('1000');
+            var tcount = 1;
+            var limit = jQuery("#kebo-tweet-slider .tweet").size();
+            var theight = jQuery('#kebo-tweet-slider .tweet').eq(0).outerHeight();
+            jQuery('#kebo-tweet-slider').css({minHeight: theight, })
+            var initTweets = setInterval(fadeTweets, 11500);
+
+            function fadeTweets() {
+
+                if (tcount == limit) {
+                    tcount = 0;
+                }
+                //theight = jQuery('#kebo-tweet-slider .tweet').eq(tcount).outerHeight();
+                //jQuery('#kebo-tweet-slider').height(theight);
+                jQuery('#kebo-tweet-slider .tweet').eq(tcount).fadeToggle('1000').delay(10500).fadeToggle('1000');
+
+                ++tcount;
+
+            }
+
+        });
+        //]]>
+    </script>
+    <?php
+
+}
+
+/*
+ * Detects touch devices - saved for potential use
+ */
+function kebo_twitter_touch_script() {
+    
+    ?>
+    <script type="text/javascript">
+        //<![CDATA[
+        jQuery(document).ready(function() {
+            
+            var is_touch_device = 'ontouchstart' in document.documentElement;
+
+            if (is_touch_device) {
+                jQuery(".kebo-tweets").each(function(index, element) {
+                    jQuery(this).addClass( "touch" );
+                });
+            } else {
+                jQuery(".kebo-tweets").each(function(index, element) {
+                    jQuery(this).addClass( "notouch" );
+                });
+            }
+            
+        });
+        //]]>
+    </script>
+    <?php
+
+}
 
 /**
  * ToDo List

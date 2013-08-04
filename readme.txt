@@ -2,8 +2,8 @@
 Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
-Tested up to: 3.5.2
-Stable tag: 0.3.5
+Tested up to: 3.6
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,8 +18,8 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. We prov
 * Get started in just a few clicks. No setting up your own Twitter App (API v1.1 made easy).
 * Compatible with any WordPress hosting.
 * Advanced caching, discreetly caches in the background after page load.
-* Completely Multisite compatible.
 * WordPress 3.6 compatible.
+* Completely Multisite compatible.
 
 Other solutions usually require you to create a Twitter App and provide the plugin with OAuth credentials yourself. Our hassle-free solution takes care of all the complex OAuth requests for you. In a few clicks you can have your Twitter Feed displayed on your site.
 
@@ -87,6 +87,13 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.4.0 =
+* New Feature: Now logs error messages from the Twitter API. You can view the log from the plugins options page and see what the errors mean.
+* Bug Fix: Fixed turning text URLs into links. It now turns text URLs, account names and hashtags into HTML links. This is done once at import, for performance.
+* Bug Fix: Moved the plugin options page from a top level menu to a sub-menu under Settings. (Thanks Shea Bunge)
+* Bug Fix: Improved default CSS styling to better fit the users theme. (Thanks apatton and Clorith)
+* Note: The information and position of data displayed for each Tweet has been changed to better replicate the official Twitter widget and save space. (Thanks apatton)
 
 = 0.3.5 =
 * New Feature: Used the in-built WP pointer system to add a helpful hint to direct new users to connect their website to Twitter.

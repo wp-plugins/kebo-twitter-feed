@@ -31,8 +31,9 @@ if (is_multisite()) {
 
         switch_to_blog($blog->blog_id);
 
-        // Delete the Option we registered.
+        // Delete the Options we registered.
         delete_option('kebo_twitter_options');
+        delete_option('kebo_twitter_errors');
 
         // Delete the Transients we registered.
         delete_transient('kebo_twitter_connection_' . $blog->blog_id);
