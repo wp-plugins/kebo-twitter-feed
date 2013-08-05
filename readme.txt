@@ -150,15 +150,25 @@ You can directly access the object containing all the Tweets like this:
 This function checks the cache and refreshes the data if needed. Then returns the object containing all the Tweets. Below is an example of how you might use the data:
 
 `
+<?php $tweets = kebo_twitter_get_tweets(); ?>
+
 <?php $i = 0; ?>
 
-<?php foreach ($tweets as $tweet) : ?>
+<?php if (is_array($tweets)) : ?>
 
-    <?php echo $tweet->text; ?>
+    <?php foreach ($tweets as $tweet) : ?>
 
-    <?php if ( ++$i == 10 ) break; ?>
+        <?php echo $tweet->text; ?>
 
-<?php endforeach; ?>
+        <?php if (++$i == 10) break; ?>
+
+    <?php endforeach; ?>
+
+<?php else : ?>
+
+    <p>Sorry, no Tweets found.</p>
+
+<?php endif; ?>
 `
 
 == What data is available? ==
