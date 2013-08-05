@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.6
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,10 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.4.1 =
+* Bug Fix: Fixed the code which checks if we have Tweets stored before rendering to the page.
+* Bug Fix: Improved the styling and function of the Slider. There will no longer occasionally be jerky re-sizing. Still working on a major re-work.
 
 = 0.4.0 =
 * New Feature: Now logs error messages from the Twitter API. You can view the log from the plugins options page and see what the errors mean.
