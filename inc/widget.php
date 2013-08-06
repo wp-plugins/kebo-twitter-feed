@@ -6,11 +6,15 @@
 /*
  * Only register Widget if connection has been made to our Twitter App.
  */
-if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection' ) ) ) {
+if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) {
     
-    add_action( 'widgets_init', function() {
+    add_action('widgets_init', 'kebo_twitter_register_widget');
+    
+    function kebo_twitter_register_widget() {
+        
         register_widget( 'Kebo_Twitter_Feed_Widget' );
-    });
+        
+    }
             
 }
 
@@ -31,30 +35,45 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
      * Outputs Content
      */
     function widget($args, $instance) {
-
+        
         extract($args, EXTR_SKIP);
+        
+        // Enqueue Style Sheet
+        wp_enqueue_style( 'kebo-twitter-plugin' );
         
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = get_transient('kebo_twitter_feed') ) ) {
-            
-            $tweets = kebo_twitter_get_tweets();
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+            return;
         
+        // Output opening Widget HTML
+        echo $before_widget;
+        
+        // If Title is set, output it with Widget title opening and closing HTML
+        if (isset($instance['title']) && !empty($instance['title'])) {
+
+            echo $before_title;
+            echo $instance['title'];
+            echo $after_title;
+            
         }
         
         /*
-         * Check which Style (Horizontal/Vertical) has been chosen and use correct view file.
+         * Check which Style (Slider/List) has been chosen and use correct view file, default List.
          */
         if ( 2 == $instance['style'] ) {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/widget_horizontal.php' );
+            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
             
         } else {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/widget_vertical.php' );
+            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
             
         }
+        
+        // Output closing Widget HTML
+        echo $after_widget;
         
     }
 
@@ -65,8 +84,18 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         ?>
 
         <?php
-        // Add default Tweet count of 5, to avoid none being set.
-        $count = ($instance['count']) ? $instance['count'] : 5;
+        // Add defaults.
+        if( !isset( $instance['count'] ) )
+            $instance['count'] = 5;
+        if( !isset( $instance['avatar'] ) )
+            $instance['avatar'] = '';
+        if( !isset( $instance['style'] ) )
+            $instance['style'] = 1;
+        if( !isset( $instance['theme'] ) )
+            $instance['theme'] = 'light';
+        if( !isset( $instance['title'] ) )
+            $instance['title'] = '';
+            
         ?>
         
         <label for="<?php echo $this->get_field_id('title'); ?>">
@@ -76,9 +105,9 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         <label for="<?php echo $this->get_field_id('style'); ?>">
             <p>
                 <?php _e('Style', 'kebo_twitter'); ?>:
-                <select id="<?php echo $this->get_field_id('style') ?>" name="<?php echo $this->get_field_name('style'); ?>">
-                    <option value="1" <?php if ( 1 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php echo __('Vertical List', 'kebo_twitter'); ?></option>
-                    <option value="2" <?php if ( 2 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php echo __('Slider', 'kebo_twitter'); ?></option>
+                <select style="width: 108px;" id="<?php echo $this->get_field_id('style') ?>" name="<?php echo $this->get_field_name('style'); ?>">
+                    <option value="1" <?php if ( 1 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php _e('List', 'kebo_twitter'); ?></option>
+                    <option value="2" <?php if ( 2 == $instance['style'] ) { echo 'selected="selected"'; } ?>><?php _e('Slider', 'kebo_twitter'); ?></option>
                 </select>
             </p>
         </label>
@@ -87,14 +116,18 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             <p>
                 <?php _e('Theme', 'kebo_twitter'); ?>:
                 <select style="width: 108px;" id="<?php echo $this->get_field_id('theme') ?>" name="<?php echo $this->get_field_name('theme'); ?>">
-                    <option value="dark" <?php if ( 'dark' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php _e('Dark', 'kebo_twitter'); ?></option>
                     <option value="light" <?php if ( 'light' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php _e('Light', 'kebo_twitter'); ?></option>
+                    <option value="dark" <?php if ( 'dark' == $instance['theme'] ) { echo 'selected="selected"'; } ?>><?php _e('Dark', 'kebo_twitter'); ?></option>
                 </select>
             </p>
         </label>
 
         <label for="<?php echo $this->get_field_id('count'); ?>">
-            <p><?php _e('Number Of Tweets', 'kebo_twitter'); ?>: <input style="width: 28px;" type="text" value="<?php echo $count; ?>" name="<?php echo $this->get_field_name('count'); ?>" id="<?php echo $this->get_field_id('count'); ?>"><span> <?php _e('Range 1-50', 'kebo_twitter') ?></span></p>
+            <p><?php _e('Number Of Tweets', 'kebo_twitter'); ?>: <input style="width: 28px;" type="text" value="<?php echo $instance['count']; ?>" name="<?php echo $this->get_field_name('count'); ?>" id="<?php echo $this->get_field_id('count'); ?>"><span> <?php _e('Range 1-50', 'kebo_twitter') ?></span></p>
+        </label>
+
+        <label for="<?php echo $this->get_field_id('avatar'); ?>">
+            <p><input style="width: 28px;" type="checkbox" value="avatar" name="<?php echo $this->get_field_name('avatar'); ?>" id="<?php echo $this->get_field_id('avatar'); ?>" <?php if ( 'avatar' == $instance['avatar'] ) { echo 'checked="checked"'; } ?>> <?php _e('Show profile image?', 'kebo_twitter'); ?> </p>
         </label>
 
         <?php
@@ -114,6 +147,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         $instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
         $instance['style'] = wp_filter_nohtml_kses( $new_instance['style'] );
         $instance['theme'] = wp_filter_nohtml_kses( $new_instance['theme'] );
+        $instance['avatar'] = wp_filter_nohtml_kses( $new_instance['avatar'] );
         
         // Check 'count' is numeric.
         if ( is_numeric( $new_instance['count'] ) ) {
