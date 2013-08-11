@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.6
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,9 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.5.2 =
+* Bug Fix: One CSS class had not been correctly prefixed with 'k', updated the 'text' using the list view to 'ktext'.
 
 = 0.5.1 =
 * Bug Fix: Fixed missing file (shortcode.php) from version 0.5.0.
