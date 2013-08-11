@@ -3,7 +3,7 @@ Contributors: PeterBooker, lukeketley
 Tags: twitter, tweets, feeds, social, api, oauth, widget
 Requires at least: 3.0.1
 Tested up to: 3.6
-Stable tag: 0.4.3
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,11 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.5.0 =
+* New Feature: Added a Shortcode to display the Twitter Feed in content areas. Example usage (with default values filled in, these will be used if you do not specify anything): [kebo_tweets title="Latest Tweets" count="5" style="list" theme="light" avatar="off"].
+* Note: Most CSS classes were changed, were prefixed with 'k', so 'reply' becomes 'kreply'. This only effects people who have customised the styling of the Widget.
+* Bug Fix: Fixed a problem with showing a blank Tweet if you had less Tweets on your account than the Tweets you were trying to show.
 
 = 0.4.3 =
 * Warning: The next major version (0.5.0) will be coming in the next couple of days and will re-name most of the classes used, to avoid any styles being picked up from commonly names classes (like .reply). So if you have written custom CSS to change the style of the plugin, please be aware that your styling might stop working when we change the class names.
