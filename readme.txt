@@ -88,6 +88,9 @@ We store data in an option and transient, both of which are removed when you uni
 
 == Changelog ==
 
+= 0.5.1 =
+* Bug Fix: Fixed missing file (shortcode.php) from version 0.5.0.
+
 = 0.5.0 =
 * New Feature: Added a Shortcode to display the Twitter Feed in content areas. Example usage (with default values filled in, these will be used if you do not specify anything): [kebo_tweets title="Latest Tweets" count="5" style="list" theme="light" avatar="off"].
 * Note: Most CSS classes were changed, were prefixed with 'k', so 'reply' becomes 'kreply'. This only effects people who have customised the styling of the Widget.
