@@ -88,6 +88,9 @@ We store data in an option and transient, both of which are removed when you uni
 
 == Changelog ==
 
+= 0.5.4 =
+* Bug Fix: Fixed Slider javascript output to use new class names.
+
 = 0.5.3 =
 * Bug Fix: Slider style of Twitter Feed CSS updated to the new class names.
 
