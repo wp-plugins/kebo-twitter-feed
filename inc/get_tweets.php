@@ -64,7 +64,16 @@ function kebo_twitter_get_tweets() {
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
-
+    
+    // Avoid Potential Fatal Error
+    /*
+     * Removed to fix fatal error: TODO- Find better way to avoid blank tweet.
+    if ( isset( $tweets['expiry'] ) ) {
+        unset( $tweets['expiry'] );
+    }
+     * 
+     */
+    
     return $tweets;
     
 }
@@ -76,7 +85,9 @@ if (!function_exists('get_tweets')) :
 
     function get_tweets() {
 
-        kebo_twitter_get_tweets();
+        $tweets = kebo_twitter_get_tweets();
+        
+        return $tweets;
         
     }
 
