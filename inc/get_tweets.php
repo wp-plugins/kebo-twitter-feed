@@ -64,7 +64,16 @@ function kebo_twitter_get_tweets() {
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
-
+    
+    // Avoid Potential Fatal Error
+    /*
+     * Removed to fix fatal error: TODO- Find better way to avoid blank tweet.
+    if ( isset( $tweets['expiry'] ) ) {
+        unset( $tweets['expiry'] );
+    }
+     * 
+     */
+    
     return $tweets;
     
 }
@@ -76,7 +85,9 @@ if (!function_exists('get_tweets')) :
 
     function get_tweets() {
 
-        kebo_twitter_get_tweets();
+        $tweets = kebo_twitter_get_tweets();
+        
+        return $tweets;
         
     }
 
@@ -189,7 +200,9 @@ function kebo_twitter_refresh_cache() {
 function kebo_twitter_linkify($tweets) {
 
     foreach ($tweets as $tweet) {
-
+        
+        // Encode Special Chars
+        $tweet->text = utf8_encode($tweet->text);
         // Text URLs into HTML links
         $tweet->text = make_clickable($tweet->text);
         // Usernames into HTML links
