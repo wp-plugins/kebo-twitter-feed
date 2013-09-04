@@ -18,19 +18,28 @@ $classes[] = $instance['theme'];
 <ul class="<?php echo implode(' ', $classes); ?>" id="kebo-tweet-slider" data-timer="10000" data-transition="1000" data-animation="fade">
 
     <?php $i = 0; ?>
+    
+    <?php
+    $options = kebo_get_twitter_options();
+    $format = $options['kebo_twitter_date_format'];
+    ?>
         
     <?php if ( isset( $tweets[0]->created_at ) ) : ?>
         
         <?php foreach ($tweets as $tweet) : ?>
 
             <?php
-                if ( date( 'Ymd' ) == date( 'Ymd', strtotime($tweet->created_at) ) ) {
-                    // Covert created at date into timeago format
-                    $created = human_time_diff( date('U', strtotime($tweet->created_at)), current_time('timestamp') );
-                } else {
-                    // Convert created at date into easily readable format.
-                    $created = date('jS M', strtotime($tweet->created_at));
-                }
+            if ( date( 'Ymd' ) == date( 'Ymd', strtotime($tweet->created_at) ) ) {
+                    
+                // Covert created at date into timeago format
+                $created = human_time_diff( date( 'U', strtotime($tweet->created_at ) ), current_time( 'timestamp' ) );
+                    
+            } else {
+                    
+                // Convert created at date into easily readable format.
+                $created = date( $format, strtotime( $tweet->created_at ) );
+                    
+            }
             ?>
 
             <li class="ktweet">
@@ -38,7 +47,7 @@ $classes[] = $instance['theme'];
                 <div class="kmeta">
                     <a class="kaccount" href="https://twitter.com/<?php echo $tweet->user->screen_name; ?>" target="_blank">@<?php echo $tweet->user->screen_name; ?></a>
                     <a class="kdate" href="https://twitter.com/<?php echo $tweet->user->screen_name; ?>/statuses/<?php echo $tweet->id_str; ?>" target="_blank">
-                        <time title="<?php _e('Time posted'); ?>: <?php echo date('dS M Y H:i:s e', strtotime($tweet->created_at)); ?>" datetime="<?php echo date('c', strtotime($tweet->created_at)); ?>" aria-label="<?php _e('Posted on '); ?><?php echo date('jS M', strtotime($tweet->created_at)); ?>"><?php echo $created; ?></time>
+                        <time title="<?php _e('Time posted'); ?>: <?php echo date_i18n( 'dS M Y H:i:s', strtotime( $tweet->created_at ) + $tweet->user->utc_offset ); ?>" datetime="<?php echo date_i18n( 'c', strtotime( $tweet->created_at ) + $tweet->user->utc_offset ); ?>" aria-label="<?php _e('Posted on '); ?><?php echo date_i18n( 'dS M Y H:i:s', strtotime( $tweet->created_at ) + $tweet->user->utc_offset ); ?>"><?php echo $created; ?></time>
                     </a>
                 </div>
 
@@ -48,7 +57,7 @@ $classes[] = $instance['theme'];
                             <img class="kavatar" src="<?php echo $tweet->user->profile_image_url; ?>" />
                         </a>
                     <?php endif; ?>
-                    <?php echo utf8_decode( $tweet->text ); ?>
+                    <?php echo $tweet->text; ?>
                 </p>
 
                 <div class="kfooter">
