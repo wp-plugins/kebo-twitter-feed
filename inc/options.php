@@ -31,9 +31,15 @@ function kebo_twitter_options_init() {
             <a class="social-link twitter disabled" href="http://auth.kebopowered.com/twitterread/?origin=<?php echo admin_url('options-general.php?page=kebo-twitter') ?>"><?php _e('Connect to Twitter', 'kebo_twitter'); ?></a>
 
         <?php else : ?>
+            
+            <?php if ( strpos( $twitter_data['account_link'], 'http' ) === false ) { $twitter_data['account_link'] = 'http://' . $twitter_data['account_link']; } ?>
 
             <a class="social-link twitter" href="#"><?php _e('Connected to Twitter', 'kebo_twitter'); ?></a><br>
-            <p><?php _e('Connected as', 'kebo_twitter'); ?> <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a> <a class="disconnect" title="<?php _e('Disconnect Service', 'kebo_twitter'); ?>" href="<?php echo admin_url('options-general.php?page=kebo-twitter&reset=true') ?>">&#10006;</a></p>
+            <p>
+                <?php _e('Connected as', 'kebo_twitter'); ?>
+                <a class="account" href="<?php echo $twitter_data['account_link']; ?>" target="_blank">@<?php echo $twitter_data['account']; ?></a>
+                <a class="disconnect" title="<?php _e('Disconnect Service', 'kebo_twitter'); ?>" href="<?php echo admin_url('options-general.php?page=kebo-twitter&reset=true') ?>">&#10006;</a>
+            </p>
 
         <?php endif; ?>
 
@@ -46,6 +52,14 @@ function kebo_twitter_options_init() {
             'kebo_twitter_cache_timer', // Unique identifier for the field for this section
             __('Feed Refresh Rate', 'kebo_twitter'), // Setting field label
             'kebo_twitter_cache_timer_render', // Function that renders the settings field
+            'kebo-twitter', // Menu slug
+            'kebo_twitter_options_general' // Settings section.
+    );
+    
+    add_settings_field(
+            'kebo_twitter_date_format', // Unique identifier for the field for this section
+            __('Date Format', 'kebo_twitter'), // Setting field label
+            'kebo_twitter_date_format_render', // Function that renders the settings field
             'kebo-twitter', // Menu slug
             'kebo_twitter_options_general' // Settings section.
     );
@@ -80,6 +94,7 @@ function kebo_get_twitter_options() {
 
     $defaults = array(
         'kebo_twitter_cache_timer' => 5,
+        'kebo_twitter_date_format' => 'jS M',
         'kebo_twitter_api_errors' => null,
     );
 
@@ -89,6 +104,37 @@ function kebo_get_twitter_options() {
     $options = array_intersect_key($options, $defaults);
 
     return $options;
+}
+
+/**
+ * Returns an array of date format dropdown options.
+ */
+function kebo_twitter_date_format_select_options() {
+    
+	$kebo_select_options = array(
+		'1' => array(
+			'value' => 'jS M',
+			'label' => date('jS M')
+		),
+		'2' => array(
+			'value' => 'd/m/y',
+			'label' => date('d/m/y')
+		),
+                '3' => array(
+			'value' => 'd/m/Y',
+			'label' => date('d/m/Y')
+		),
+                '4' => array(
+			'value' => 'm/d/y',
+			'label' => date('m/d/y')
+		),
+                '5' => array(
+			'value' => 'm/d/Y',
+			'label' => date('m/d/Y')
+		),
+	);
+
+	return apply_filters( 'kebo_twitter_date_format_select_options', $kebo_select_options );
 }
 
 /**
@@ -102,6 +148,30 @@ function kebo_twitter_cache_timer_render() {
     <label class="description" for="kebo_twitter_cache_timer"><?php _e('Minutes. Should be between 1 and 30.', 'kebo_twitter'); ?></label>
     <p><?php _e('This controls how frequently we update the stored list of Tweets for display on your website.', 'kebo_twitter'); ?></p>
     <?php
+}
+
+/**
+ * Renders the Date Format input.
+ */
+function kebo_twitter_date_format_render() {
+
+    $options = kebo_get_twitter_options();
+    ?>
+	<select name="kebo_twitter_options[kebo_twitter_date_format]" id="kebo_twitter_options[kebo_twitter_date_format]">
+		<?php
+			$selected = $options['kebo_twitter_date_format'];
+
+			foreach ( kebo_twitter_date_format_select_options() as $option ) {
+				$label = $option['label'];
+				if ( $selected == $option['value'] ) // Make default first in list
+					echo "\n\t<option style=\"padding-right: 10px;\" selected='selected' value='" . esc_attr( $option['value'] ) . "'>$label</option>";
+				else
+					echo "\n\t<option style=\"padding-right: 10px;\" value='" . esc_attr( $option['value'] ) . "'>$label</option>";
+			}
+		?>
+	</select>
+	<label class="description" for="kebo_twitter_options[kebo_twitter_date_format]"><?php _e( 'Choose the date format to use for Tweets more than a day old.', 'kebo_twitter' ); ?></label>
+	<?php
 }
 
 /**
@@ -145,6 +215,8 @@ function kebo_twitter_options_validate($input) {
             );
             
         }
+        
+        $output['kebo_twitter_date_format'] = $input['kebo_twitter_date_format'];
         
     }
 
