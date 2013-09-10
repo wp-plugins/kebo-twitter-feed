@@ -298,7 +298,7 @@ Currently there is one Shortcode which can be used to replicate the behavior of 
 
 Or by using PHP directly:
 
-`<?php do_shortcode('[kebo_tweets]'); ?>`
+`<?php echo do_shortcode('[kebo_tweets]'); ?>`
 
 Here is the shortcode with all the available attributes and their default values:
 
