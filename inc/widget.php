@@ -6,7 +6,7 @@
 /*
  * Only register Widget if connection has been made to our Twitter App.
  */
-if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) {
+if ( false !== ( $twitter_data = get_option( 'kebo_twitter_connection' ) ) ) {
     
     add_action('widgets_init', 'kebo_twitter_register_widget');
     
@@ -64,11 +64,11 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
          */
         if ( 2 == $instance['style'] ) {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+            require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
             
         } else {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+            require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
             
         }
         
