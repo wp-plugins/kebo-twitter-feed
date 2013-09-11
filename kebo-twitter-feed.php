@@ -3,7 +3,7 @@
  * Plugin Name: Kebo Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 0.4.2
+ * Version: 0.6.0
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '0.4.2');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '0.6.0');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -40,6 +40,11 @@ function kebo_twitter_plugin_setup() {
      * Include Request for the Twitter Feed.
      */
     require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/get_tweets.php' );
+    
+    /**
+     * Include Shortcode.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/shortcode.php' );
 
     /**
      * Load Text Domain for Translations.
@@ -157,11 +162,11 @@ function kebo_twitter_slider_script() {
             var timer = jQuery( "#kebo-tweet-slider" ).data( "timer" );
             var transition = jQuery( "#kebo-tweet-slider" ).data( "transition" );
             var tcount = 1;
-            var limit = jQuery("#kebo-tweet-slider .tweet").size();
-            var theight = jQuery('#kebo-tweet-slider .tweet').eq(0).outerHeight();
+            var limit = jQuery("#kebo-tweet-slider .ktweet").size();
+            var theight = jQuery('#kebo-tweet-slider .ktweet').eq(0).outerHeight();
             var initTweets = setInterval( fadeTweets, timer );
             
-            jQuery('#kebo-tweet-slider .tweet').eq(0).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
+            jQuery('#kebo-tweet-slider .ktweet').eq(0).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
             jQuery('#kebo-tweet-slider').height(theight);
 
             function fadeTweets() {
@@ -169,9 +174,9 @@ function kebo_twitter_slider_script() {
                 if (tcount == limit) {
                     tcount = 0;
                 }
-                theight = jQuery('#kebo-tweet-slider .tweet').eq(tcount).outerHeight();
+                theight = jQuery('#kebo-tweet-slider .ktweet').eq(tcount).outerHeight();
                 jQuery('#kebo-tweet-slider').height(theight);
-                jQuery('#kebo-tweet-slider .tweet').eq(tcount).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
+                jQuery('#kebo-tweet-slider .ktweet').eq(tcount).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
 
                 ++tcount;
 
@@ -212,6 +217,67 @@ function kebo_twitter_touch_script() {
     <?php
 
 }
+
+/*
+ * Runs On Plugin Activation
+ */
+function kebo_twitter_activation() {
+    
+    if ( is_multisite() ) {
+
+        global $wpdb;
+
+        // Store Network Site ID so we can get back later.
+        $current_blog = get_current_blog_id();
+
+        // Get a list of all Blog IDs, ignore network admin with ID of 1.
+        $blogs = $wpdb->get_results("
+                SELECT blog_id
+                FROM {$wpdb->blogs}
+                WHERE site_id = '{$wpdb->siteid}'
+                AND spam = '0'
+                AND deleted = '0'
+                AND archived = '0'
+                AND blog_id != '{$current_blog}'
+            ");
+
+        foreach ( $blogs as $blog ) {
+
+            switch_to_blog( $blog->blog_id );
+
+            // Check if old format is used for storing connection info
+            if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . $blog->blog_id ) ) ) {
+
+                // Add connection data to new Option
+                update_option( 'kebo_twitter_connection', $twitter_data );
+
+                // Delete the now un-used Transient
+                delete_transient( 'kebo_twitter_connection_' . $blog->blog_id );
+
+            }
+
+        }
+
+        // Go back to Network Site
+        switch_to_blog($current_blog);
+    
+    } else {
+
+         // Check if old format is used for storing connection info
+        if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_1' ) ) ) {
+
+            // Add connection data to new Option
+            update_option( 'kebo_twitter_connection', $twitter_data );
+
+            // Delete the now un-used Transient
+            delete_transient( 'kebo_twitter_connection_1' );
+
+        }
+
+    }
+    
+}
+register_activation_hook( __FILE__, 'kebo_twitter_activation' );
 
 /**
  * ToDo List
