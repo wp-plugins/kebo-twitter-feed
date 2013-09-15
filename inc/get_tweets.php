@@ -6,7 +6,8 @@
 function kebo_twitter_get_tweets() {
 
     // If there is no social connection, we cannot get tweets, so return false
-    if (false === ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) )
+    $twitter_data = get_option( 'kebo_twitter_connection' );
+    if ( empty ( $twitter_data ) )
         return false;
 
     // Grab the Plugin Options.
@@ -64,7 +65,16 @@ function kebo_twitter_get_tweets() {
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
-
+    
+    // Avoid Potential Fatal Error
+    /*
+     * Removed to fix fatal error: TODO- Find better way to avoid blank tweet.
+    if ( isset( $tweets['expiry'] ) ) {
+        unset( $tweets['expiry'] );
+    }
+     * 
+     */
+    
     return $tweets;
     
 }
@@ -72,15 +82,17 @@ function kebo_twitter_get_tweets() {
 /*
  * Alias function for 'kebo_twitter_get_tweets'.
  */
-if (!function_exists('get_tweets')) :
+if ( ! function_exists( 'get_tweets' ) ) {
 
     function get_tweets() {
 
-        kebo_twitter_get_tweets();
+        $tweets = kebo_twitter_get_tweets();
+        
+        return $tweets;
         
     }
 
-endif;
+}
 
 /*
  * Hooks Output Function to 'wp_footer'.
@@ -89,7 +101,8 @@ endif;
 function kebo_twitter_print_js() {
 
     // Add javascript output script to 'wp_footer' hook with low priority so that jQuery loads before.
-    add_action('wp_footer', 'kebo_twitter_slider_script', 99);
+    add_action( 'wp_footer', 'kebo_twitter_slider_script', 99 );
+    
 }
 
 /*
@@ -98,7 +111,7 @@ function kebo_twitter_print_js() {
 
 function kebo_twitter_external_request() {
 
-    if (false !== ( $twitter_data = get_transient('kebo_twitter_connection_' . get_current_blog_id()) )) {
+    if ( false !== ( $twitter_data = get_option('kebo_twitter_connection' ) ) ) {
 
         // URL to Kebo OAuth Request App
         $request_url = 'http://auth.kebopowered.com/request/index.php';
@@ -144,7 +157,7 @@ function kebo_twitter_refresh_cache() {
     /*
      * If cache has already been updated, no need to refresh
      */
-    if (false !== ( $tweets = get_transient('kebo_twitter_feed_' . get_current_blog_id()) )) {
+    if ( false !== ( $tweets = get_transient( 'kebo_twitter_feed_' . get_current_blog_id() ) ) ) {
 
         // Make POST request to Kebo OAuth App.
         $response = kebo_twitter_external_request();
@@ -175,7 +188,7 @@ function kebo_twitter_refresh_cache() {
             $tweets['expiry'] = time() + ( $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
 
             // No error, set transient with latest Tweets
-            set_transient('kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS);
+            set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
             
         }
         
@@ -189,7 +202,11 @@ function kebo_twitter_refresh_cache() {
 function kebo_twitter_linkify($tweets) {
 
     foreach ($tweets as $tweet) {
-
+        
+        // Encode Special Chars
+        $tweet->text = htmlentities($tweet->text, ENT_QUOTES, 'UTF-8');
+        // Decode HTML Chars like &amp; to &
+        $tweet->text = htmlspecialchars_decode($tweet->text, ENT_QUOTES);
         // Text URLs into HTML links
         $tweet->text = make_clickable($tweet->text);
         // Usernames into HTML links
