@@ -42,7 +42,7 @@ function kebo_twitter_menu_render() {
             );
             
             // Store Website OAuth Credentials in transient, use extra long expiry as Twitter does not currently set an expiry time.
-            set_transient('kebo_twitter_connection_' . get_current_blog_id(), $data, 10 * YEAR_IN_SECONDS);
+            update_option( 'kebo_twitter_connection', $data );
             
             // On Successful Connection, Fetch Tweets.
             kebo_twitter_get_tweets();
@@ -56,14 +56,14 @@ function kebo_twitter_menu_render() {
                 'updated'
             );
 
-        endif;
+    endif;
 
         // Check for reset request, if set delete transient which will break the connection to Twitter, so the credentials will be lost.
         if ( isset( $_GET['reset'] ) && 'true' == $_GET['reset'] ) :
 
             if ( 'true' == $_GET['reset'] ) :
 
-                delete_transient( 'kebo_twitter_connection_' . get_current_blog_id() );
+                update_option( 'kebo_twitter_connection', false );
             
                 add_settings_error(
                     'kebo_twitter_connection_reset',
