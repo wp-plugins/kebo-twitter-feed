@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 0.6.4
+ * Version: 0.6.5
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '0.6.4');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '0.6.5');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -296,6 +296,30 @@ function kebo_twitter_upgrade_notice() {
     
     <div class="updated">
         <p><?php _e( 'This update changed the way your connection to Twitter was stored by WordPress, please check the plugin is still connected to your Twitter account, <a href="' . admin_url( 'options-general.php?page=kebo-twitter' ) . '">here</a>.', 'kebo_twitter' ); ?></p>
+    </div>
+    
+    <?php
+}
+
+/*
+ * Display an Admin Notice if plugin is active but no connection to Twitter is active.
+ */
+
+$twitter_data = get_option( 'kebo_twitter_connection' );
+
+// Check if Connection data is being stored.
+if ( empty ( $twitter_data ) ) {
+    
+    add_action( 'admin_notices', 'kebo_twitter_no_connection_notice' );
+    
+}
+
+// Display Notice
+function kebo_twitter_no_connection_notice() {
+    ?>
+    
+    <div class="updated">
+        <p><?php _e( '<strong>Kebo Twitter Feed: No connection to Twitter found, to get started connect to your Twitter account from <a href="' . admin_url( 'options-general.php?page=kebo-twitter' ) . '">this page</a>.</strong>', 'kebo_twitter' ); ?></p>
     </div>
     
     <?php
