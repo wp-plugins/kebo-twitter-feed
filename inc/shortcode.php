@@ -19,7 +19,8 @@ class Kebo_Twitter_Shortcode {
             'theme' => 'light',
             'count' => 5,
             'avatar' => 'off',
-            'offset' => false
+            'offset' => false,
+            'conversations' => false,
         ), $atts));
         
         // Check if a connection to Twitter exists.
@@ -33,6 +34,7 @@ class Kebo_Twitter_Shortcode {
         // Add defaults.
         $instance['count'] = $count;
         $instance['theme'] = $theme;
+        $instance['conversations'] = $conversations;
         
         if ( 'on' == $avatar ) {
             
@@ -72,6 +74,12 @@ class Kebo_Twitter_Shortcode {
         if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
             return false;
 
+        /*
+         * Remove Expiry to leave clean Tweets array
+         */
+        if ( isset( $tweets['expiry'] ) )
+            unset($tweets['expiry']);
+        
         // If an offset is set, slice early items off the array
         if ( ! false == $offset && is_numeric( $offset ) ) {
             

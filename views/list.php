@@ -20,10 +20,11 @@
         <?php foreach ($tweets as $tweet) : ?>
 
             <?php
-            if ( date( 'Ymd' ) == date( 'Ymd', strtotime($tweet->created_at) ) ) {
+            // Prepare Date Formats
+            if ( date( 'Ymd' ) == date( 'Ymd', strtotime( $tweet->created_at ) ) ) {
                     
                 // Covert created at date into timeago format
-                $created = human_time_diff( date( 'U', strtotime($tweet->created_at ) ), current_time( 'timestamp', $gmt = 1 ) );
+                $created = human_time_diff( date( 'U', strtotime( $tweet->created_at ) ), current_time( 'timestamp', $gmt = 1 ) );
                     
             } else {
                     
@@ -31,6 +32,11 @@
                 $created = date( $format, strtotime( $tweet->created_at ) );
                     
             }
+            
+            // Check if we should display replies and hide if so and this is a reply.
+            if ( ! true == $instance['conversations'] && ( ! empty( $tweet->in_reply_to_screen_name ) || ! empty( $tweet->in_reply_to_user_id_str ) || ! empty( $tweet->in_reply_to_status_id_str ) ) )
+                continue; // skip this loop without changing the counter
+            
             ?>
 
             <li class="ktweet">
@@ -65,7 +71,7 @@
             
     <?php else : ?>
             
-            <p><?php _e('Sorry, no Tweets were found.', 'kebo_twitter'); ?></p>
+            <p><?php _e( 'The Tweet data is not in the expected format.', 'kebo_twitter' ); ?></p>
             
     <?php endif; ?>
         
