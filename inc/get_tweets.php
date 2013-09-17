@@ -6,7 +6,8 @@
 function kebo_twitter_get_tweets() {
 
     // If there is no social connection, we cannot get tweets, so return false
-    if (false === ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) )
+    $twitter_data = get_option( 'kebo_twitter_connection' );
+    if ( empty ( $twitter_data ) )
         return false;
 
     // Grab the Plugin Options.
@@ -64,7 +65,16 @@ function kebo_twitter_get_tweets() {
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
-
+    
+    // Avoid Potential Fatal Error
+    /*
+     * Removed to fix fatal error: TODO- Find better way to avoid blank tweet.
+    if ( isset( $tweets['expiry'] ) ) {
+        unset( $tweets['expiry'] );
+    }
+     * 
+     */
+    
     return $tweets;
     
 }
@@ -72,15 +82,17 @@ function kebo_twitter_get_tweets() {
 /*
  * Alias function for 'kebo_twitter_get_tweets'.
  */
-if (!function_exists('get_tweets')) :
+if ( ! function_exists( 'get_tweets' ) ) {
 
     function get_tweets() {
 
-        kebo_twitter_get_tweets();
+        $tweets = kebo_twitter_get_tweets();
+        
+        return $tweets;
         
     }
 
-endif;
+}
 
 /*
  * Hooks Output Function to 'wp_footer'.
@@ -89,7 +101,8 @@ endif;
 function kebo_twitter_print_js() {
 
     // Add javascript output script to 'wp_footer' hook with low priority so that jQuery loads before.
-    add_action('wp_footer', 'kebo_twitter_slider_script', 99);
+    add_action( 'wp_footer', 'kebo_twitter_slider_script', 99 );
+    
 }
 
 /*
@@ -98,7 +111,7 @@ function kebo_twitter_print_js() {
 
 function kebo_twitter_external_request() {
 
-    if (false !== ( $twitter_data = get_transient('kebo_twitter_connection_' . get_current_blog_id()) )) {
+    if ( false !== ( $twitter_data = get_option('kebo_twitter_connection' ) ) ) {
 
         // URL to Kebo OAuth Request App
         $request_url = 'http://auth.kebopowered.com/request/index.php';
@@ -144,7 +157,7 @@ function kebo_twitter_refresh_cache() {
     /*
      * If cache has already been updated, no need to refresh
      */
-    if (false !== ( $tweets = get_transient('kebo_twitter_feed_' . get_current_blog_id()) )) {
+    if ( false !== ( $tweets = get_transient( 'kebo_twitter_feed_' . get_current_blog_id() ) ) ) {
 
         // Make POST request to Kebo OAuth App.
         $response = kebo_twitter_external_request();
@@ -175,7 +188,7 @@ function kebo_twitter_refresh_cache() {
             $tweets['expiry'] = time() + ( $options['kebo_twitter_cache_timer'] * MINUTE_IN_SECONDS );
 
             // No error, set transient with latest Tweets
-            set_transient('kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS);
+            set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
             
         }
         
@@ -186,18 +199,109 @@ function kebo_twitter_refresh_cache() {
 /*
  * Converts Tweet text urls, account names and hashtags into HTML links.
  */
-function kebo_twitter_linkify($tweets) {
+function kebo_twitter_linkify( $tweets ) {
+    
+    foreach ( $tweets as $tweet ) {
 
-    foreach ($tweets as $tweet) {
+        $hash_length = 45; // Length of HTML added to hashtags
+        $mention_length = 33; // Length of HTML added to mentions
+        $markers = array();
+        
+        /*
+         * Linkify Hashtags
+         */
+        if ( ! empty( $tweet->entities->hashtags ) ) {
+            
+            // One Hashtag at a time
+            foreach ( $tweet->entities->hashtags as $hastag ) {
+                
+                // Start offset from 0
+                $offset = 0;
+                // Calculate length of hastag - end minus start
+                $length = $hastag->indices[1] - $hastag->indices[0];
+                
+                // If no markers, no need to offset
+                if ( ! empty( $markers ) ) {
+                    
+                    foreach ( $markers as $mark ) {
+                        
+                        // If the start point is past a previous marker, we need to adjust for the characters added.
+                        if ( $hastag->indices[0] > $mark['point'] ) {
+                            
+                            // Include previous offsets.
+                            $offset = ( $offset + ( $mark['length'] ) );
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                /*
+                 * Replace hashtag text with an HTML link
+                 */
+                $tweet->text = substr_replace( $tweet->text, '<a href="http://twitter.com/search?q=%23' . $hastag->text . '">#' . $hastag->text . '</a>', $hastag->indices[0] + $offset, $length );
 
-        // Text URLs into HTML links
-        $tweet->text = make_clickable($tweet->text);
-        // Usernames into HTML links
-        $tweet->text = preg_replace('#@([\\d\\w]+)#', '<a href="http://twitter.com/$1">$0</a>', $tweet->text);
-        // Hashtags to HTML links
-        $tweet->text = preg_replace('/#([\\d\\w]+)/', '<a href="http://twitter.com/#search?q=%23$1">$0</a>', $tweet->text);
-        // Add target="_blank" to all links
-        $tweet->text = links_add_target($tweet->text, '_blank', array('a'));
+                // Set marker so we can take into account the characters we just added.
+                $markers[] = array(
+                    'point' => $hastag->indices[0],
+                    'length' => $hash_length + $length,
+                );
+                
+                
+            }
+            
+        }
+        
+        /*
+         * Linkify Mentions
+         */
+        if ( ! empty( $tweet->entities->user_mentions ) ) {
+            
+            // One Mention at a time
+            foreach ( $tweet->entities->user_mentions as $mention ) {
+                
+                $offset = 0;
+                $length = $mention->indices[1] - $mention->indices[0];
+                
+                if ( ! empty($markers) ) {
+                    foreach ( $markers as $mark ) {
+                        if ( $mention->indices[0] > $mark['point'] ) {
+                            $offset = ( $offset + ( $mark['length'] ) );
+                        }
+                    }
+                }
+                
+                /*
+                 * Replace mention text with an HTML link
+                 */
+                $tweet->text = substr_replace( $tweet->text, '<a href="http://twitter.com/' . $mention->screen_name . '">@' . $mention->screen_name . '</a>', $mention->indices[0] + $offset, $length );
+
+                // Set marker so we can take into account the characters we just added.
+                $markers[] = array(
+                    'point' => $mention->indices[0],
+                    'length' => $mention_length + $length,
+                );
+                
+                
+            }
+            
+        }
+        
+        /*
+         * Linkify text URLs
+         */
+        $tweet->text = make_clickable( $tweet->text );
+        
+        /*
+         * Add target="_blank" to all links
+         */
+        $tweet->text = links_add_target( $tweet->text, '_blank', array( 'a' ) );
+        
+        /*
+         * Decode HTML Chars like &#039; to '
+         */
+        $tweet->text = htmlspecialchars_decode( $tweet->text, ENT_QUOTES );
         
     }
     
