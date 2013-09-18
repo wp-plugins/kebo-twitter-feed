@@ -3,11 +3,13 @@
  * Twitter Feed Widget
  */
 
+$twitter_data = get_option( 'kebo_twitter_connection' );
+
 /*
  * Only register Widget if connection has been made to our Twitter App.
  */
-if ( false !== ( $twitter_data = get_transient( 'kebo_twitter_connection_' . get_current_blog_id() ) ) ) {
-    
+if ( ! empty ( $twitter_data ) ) {
+        
     add_action('widgets_init', 'kebo_twitter_register_widget');
     
     function kebo_twitter_register_widget() {
@@ -47,11 +49,24 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
             return;
         
+        // Ensure not undefined for updates
+        if ( ! isset( $instance['conversations'] ) )
+            $instance['conversations'] = false;
+        
+        /*
+         * Remove Expiry to leave clean Tweets array
+         */
+        if ( isset( $tweets['expiry'] ) ) {
+            
+            unset( $tweets['expiry'] );
+            
+        }
+        
         // Output opening Widget HTML
         echo $before_widget;
         
         // If Title is set, output it with Widget title opening and closing HTML
-        if (isset($instance['title']) && !empty($instance['title'])) {
+        if ( isset($instance['title'] ) && ! empty( $instance['title'] ) ) {
 
             echo $before_title;
             echo $instance['title'];
@@ -64,11 +79,11 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
          */
         if ( 2 == $instance['style'] ) {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+            require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
             
         } else {
             
-            require_once( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+            require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
             
         }
         
@@ -80,7 +95,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
     /*
      * Outputs Options Form
      */
-    function form($instance) {
+    function form( $instance ) {
         ?>
 
         <?php
@@ -95,6 +110,8 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             $instance['theme'] = 'light';
         if( !isset( $instance['title'] ) )
             $instance['title'] = '';
+        if( !isset( $instance['conversations'] ) )
+            $instance['conversations'] = false;
             
         ?>
         
@@ -130,6 +147,10 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             <p><input style="width: 28px;" type="checkbox" value="avatar" name="<?php echo $this->get_field_name('avatar'); ?>" id="<?php echo $this->get_field_id('avatar'); ?>" <?php if ( 'avatar' == $instance['avatar'] ) { echo 'checked="checked"'; } ?>> <?php _e('Show profile image?', 'kebo_twitter'); ?> </p>
         </label>
 
+        <label for="<?php echo $this->get_field_id('conversations'); ?>">
+            <p><input style="width: 28px;" type="checkbox" value="true" name="<?php echo $this->get_field_name('conversations'); ?>" id="<?php echo $this->get_field_id('conversations'); ?>" <?php if ( 'true' == $instance['conversations'] ) { echo 'checked="checked"'; } ?>> <?php _e('Show conversations?', 'kebo_twitter'); ?> </p>
+        </label>
+
         <?php
     }
 
@@ -148,6 +169,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         $instance['style'] = wp_filter_nohtml_kses( $new_instance['style'] );
         $instance['theme'] = wp_filter_nohtml_kses( $new_instance['theme'] );
         $instance['avatar'] = wp_filter_nohtml_kses( $new_instance['avatar'] );
+        $instance['conversations'] = wp_filter_nohtml_kses( $new_instance['conversations'] );
         
         // Check 'count' is numeric.
         if ( is_numeric( $new_instance['count'] ) ) {
