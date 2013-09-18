@@ -1,9 +1,9 @@
 === Kebo Twitter Feed ===
 Contributors: PeterBooker, lukeketley
-Tags: twitter, tweets, feeds, social, api, oauth, widget
-Requires at least: 3.0.1
-Tested up to: 3.6
-Stable tag: 0.4.2
+Tags: twitter, feed, twitter feed, latest tweets, twitter api, twitter shortcode, twitter 1.1, twitter widget, tweets, twitter tweets
+Requires at least: 3.2
+Tested up to: 3.6.1
+Stable tag: 0.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ We make this so easy by managing all the complex OAuth requests on our own serve
 
 = Rate Us / Feedback =
 
-Please take the time to let us and others know about your experiences by leaving a review. If your use of our plugin has not been a five star experience please let us know at: feedback@kebopowered.com.
+Please take the time to let us and others know about your experiences by leaving a review. If your use of our plugin has not been a five star experience please let us know on the support forum.
 
 == Installation ==
 
@@ -87,6 +87,103 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 0.7.5 =
+* Bug Fix: Prevent 'Cannot unset string offsets' error from occuring by changing how we deal with the expiry time at the end of the $tweets array.
+
+= 0.7.4 =
+* Bug Fix: Prevent an 'Illegal string offset' warning from occurring by checking for an array keys existence first.
+
+= 0.7.3 =
+* New Feature: You can now choose whether or not to show conversations in your feed using the Widget and Shortcode.
+* Bug Fix: Prevent undefined index on updated plugins.
+
+= 0.7.2 =
+* Bug Fix: Handles character encoding differently, should work on all sites/themes using UTF8 charsets.
+* Bug Fix: Improved handling of linkifying hashtags and mentions in tweet text. No longer uses regex.
+* Note: Changed the "Sorry, no Tweets were found." error message to "The Tweet data is not in the expected format.", which better reflects the situation.
+* Note: There have been a lot of character encoding issues reported recently and I am determined to fix these. If you notice any problems please let me know.
+
+= 0.6.7 =
+* Bug Fix: Correctly decode codes for single quotes.
+* Bug Fix: Prevent duplicate options save messages.
+
+= 0.6.6 =
+* Bug Fix: Fixed duplicate admin notices.
+
+= 0.6.5 =
+* Bug Fix: Improved admin notices when user action is required.
+
+= 0.6.4 =
+* Bug Fix: Improved check to run upgrade script.
+
+= 0.6.3 =
+* Bug Fix: Fixed upgrade function not running on plugin update. Twitter connection data should now be migrated on update.
+* Bug Fix: Now correctly decodes single quotes in Tweet text.
+
+= 0.6.1 =
+* Bug Fix: Fixed Plugin settings page not correctly identifying if a social connection has been made or not.
+
+= 0.6.0 =
+* Bug Fix: Store Twitter Connection data in reliable format, so it cannot be lost.
+* Note: Your Twitter Connection information will be migrated from a Transient to an Option on activation. If anything goes wrong you may need to connect the plugin to your Twitter account again.
+
+= 0.5.13 =
+* Bug Fix: Correctly calculates 'timeago' when WordPress is using a timezone which is not GMT/UTC.
+
+= 0.5.12 =
+* Bug Fix: Correctly decode HTML chars like &amp; to &.
+* Bug Fix: Improved error log styling for improved readability.
+* Note: Extended the date format options to include full year displays.
+
+= 0.5.11 =
+* Bug Fix: Encoding of International Characters.
+* New Feature: Added option for date format to plugin options page.
+* Bug Fix: Display times using users time zone.
+
+= 0.5.10 =
+* Bug Fix: Properly encode/decode Tweet text using UTF-8, so that characters display as intended when output.
+* Note: I am still investigating how to display characters as symbols as seen on the Twitter website.
+
+= 0.5.9 =
+* Bug Fix: Added output buffering to the Shortcode, fixes Tweets appearing at the top of the page regardless of Shortcode position. (Thanks dstZloi)
+
+= 0.5.8 =
+* Bug Fix: Fixed corruption of Tweet data when special characters were used to create symbols on Twitter. (Thanks Rosie)
+
+= 0.5.7 =
+* Bug Fix: Removed code which can potentially cause fatal PHP error.
+
+= 0.5.6 =
+* Bug Fix: Avoids Fatal PHP Error when the format of fetched data is not as expected.
+
+= 0.5.5 =
+* New Feature: Added 'Offset' attribute to the Shortcode, allowing you to skip a certain number of the Tweets from the beginning of the feed.
+* Note: Added Shortcode information and attributes to the 'Other Notes' section.
+* Bug Fix: Twitter API responses only come GZIP'd if the relevant Accept-Encoding headers are present, the default is now without inflation. This should resolve the rare cases where badly formated data was fetched, as the website could not deflate the response and so no Tweets could be displayed.
+* Note: Added details of WordPress's inbuilt functionality for embedding Tweets into posts/pages to the 'Other Notes' section.
+
+= 0.5.4 =
+* Bug Fix: Fixed Slider javascript output to use new class names.
+
+= 0.5.3 =
+* Bug Fix: Slider style of Twitter Feed CSS updated to the new class names.
+
+= 0.5.2 =
+* Bug Fix: One CSS class had not been correctly prefixed with 'k', updated the 'text' using the list view to 'ktext'.
+
+= 0.5.1 =
+* Bug Fix: Fixed missing file (shortcode.php) from version 0.5.0.
+
+= 0.5.0 =
+* New Feature: Added a Shortcode to display the Twitter Feed in content areas. Example usage (with default values filled in, these will be used if you do not specify anything): [kebo_tweets title="Latest Tweets" count="5" style="list" theme="light" avatar="off"].
+* Note: Most CSS classes were changed, were prefixed with 'k', so 'reply' becomes 'kreply'. This only effects people who have customised the styling of the Widget.
+* Bug Fix: Fixed a problem with showing a blank Tweet if you had less Tweets on your account than the Tweets you were trying to show.
+
+= 0.4.3 =
+* Warning: The next major version (0.5.0) will be coming in the next couple of days and will re-name most of the classes used, to avoid any styles being picked up from commonly names classes (like .reply). So if you have written custom CSS to change the style of the plugin, please be aware that your styling might stop working when we change the class names.
+* Bug Fix: Reverted code used to check for Tweets before rendering, which was incorrectly causing "Sorry, no Tweets were found." to be displayed.
+* Bug Fix: Profile images now correctly link to the users profle (Thanks Joshua Michaels).
 
 = 0.4.2 =
 * Bug Fix: Fixed error logging to include internal WP_Errors when making HTTP requests, not just Twitter API errors.
@@ -149,6 +246,39 @@ We store data in an option and transient, both of which are removed when you uni
 = 0.15 =
 * Note: Initial version.
 
+== Styling the Widget ==
+
+We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
+
+If you want to style the inside of the Widget below is the HTML structure:
+
+`
+<ul class="kebo-tweets">
+
+    <li class="ktweet">
+
+        <div class="kmeta">
+            <a class="kaccount"></a>
+            <a class="kdate"></a>
+        </div>
+        
+        <p class="ktext">
+            <a><img class="kavatar" /></a>
+        </p>
+
+        <div class="kfooter">
+            <a class="kreply"></a>
+            <a class="kretweet"></a>
+            <a class="kfavourite"></a>
+        </div>
+
+    </li>
+
+</ul>
+`
+
+The slider has one significant change which is that the containing unordered list has an ID of 'kebo-tweet-slider'.
+
 == Developers Notes ==
 
 You can directly access the object containing all the Tweets like this:
@@ -162,7 +292,7 @@ This function checks the cache and refreshes the data if needed. Then returns th
 
 <?php $i = 0; ?>
 
-<?php if (is_array($tweets)) : ?>
+<?php if ( isset( $tweets[0]->created_at ) ) : ?>
 
     <?php foreach ($tweets as $tweet) : ?>
 
@@ -200,34 +330,33 @@ $tweet->user->profile_image_url_https // As above but with HTTPS
 
 There are many ways you could use this information for more than just a Twitter Feed. For example you could also use this to track the follower count of your Twitter account for display on your website.
 
-== Styling the Widget ==
+== Shortcodes ==
 
-We use the the inbuilt methods to output the Widget and Title containers so that it should fit seamlessly into your website.
+Currently there is one Shortcode which can be used to replicate the behavior of the Widget. You can call this shortcode in the content of a post and/or page using:
 
-If you want to style the inside of the Widget below is the HTML structure:
+`[kebo_tweets]`
+
+Or by using PHP directly:
+
+`<?php echo do_shortcode('[kebo_tweets]'); ?>`
+
+Here is the shortcode with all the available attributes and their default values:
+
+`[kebo_tweets title="" count="5" style="list" theme="light" offset="false" avatar="off"]`
+
+The available options are:
 
 `
-<ul class="kebo-tweets vertical">
-
-    <li class="tweet">
-
-        <div class="meta">
-            <a class="account"></a>
-            <a class="date"></a>
-        </div>
-        
-        <p class="text"></p>
-
-        <div class="links">
-            <a class="reply"></a>
-            <a class="retweet"></a>
-            <a class="favourite"></a>
-        </div>
-
-    </li>
-
-</ul>
+Title - Text
+Count - 1-50
+Style - list/slider
+Theme - light/dark
+Avatar - on/off
+Offset - 1-50
 `
 
-The slider has one significant change which is that the containing unordered list has an ID of 'kebo-tweet-slider'.
+== Embedded Tweets ==
 
+WordPress has inbuilt functionality for embedding Tweets directly into posts/pages. You can do this by simply pasting the full URL of the Tweet into the content, the URL will look similar to this:
+
+`https://twitter.com/BarackObama/statuses/266031293945503744`
