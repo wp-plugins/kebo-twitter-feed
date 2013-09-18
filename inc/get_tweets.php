@@ -22,15 +22,15 @@ function kebo_twitter_get_tweets() {
         $response = kebo_twitter_external_request();
         
         // If not WP Error response is in body
-        if ( !is_wp_error($response) ) {
+        if ( ! is_wp_error( $response ) ) {
             
             // Response is in JSON format, so decode it.
-            $response = json_decode($response['body']);
+            $response = json_decode( $response['body'] );
             
         }
         
         // Check for Error or Success Response.
-        if (isset($response->errors) ) {
+        if ( isset( $response->errors ) ) {
             
             // If error, add to error log.
             kebo_twitter_add_error( $response );
@@ -53,7 +53,7 @@ function kebo_twitter_get_tweets() {
     /*
      * Check if Twwets have soft expired (user setting), if so run refresh after page load.
      */
-    elseif ( $tweets['expiry'] < time() ) {
+    elseif ( isset( $tweets['expiry'] ) && $tweets['expiry'] < time() ) {
 
         // Add 10 seconds to soft expire, to stop other threads trying to update it at the same time.
         $tweets['expiry'] = ( time() + 60 );
@@ -65,15 +65,6 @@ function kebo_twitter_get_tweets() {
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
         
     }
-    
-    // Avoid Potential Fatal Error
-    /*
-     * Removed to fix fatal error: TODO- Find better way to avoid blank tweet.
-    if ( isset( $tweets['expiry'] ) ) {
-        unset( $tweets['expiry'] );
-    }
-     * 
-     */
     
     return $tweets;
     
@@ -111,7 +102,7 @@ function kebo_twitter_print_js() {
 
 function kebo_twitter_external_request() {
 
-    if ( false !== ( $twitter_data = get_option('kebo_twitter_connection' ) ) ) {
+    if ( false !== ( $twitter_data = get_option( 'kebo_twitter_connection' ) ) ) {
 
         // URL to Kebo OAuth Request App
         $request_url = 'http://auth.kebopowered.com/request/index.php';
@@ -142,10 +133,12 @@ function kebo_twitter_external_request() {
         );
 
         // Make POST request to Kebo OAuth App.
-        $request = wp_remote_post($request_url, $args);
+        $request = wp_remote_post( $request_url, $args );
 
         return $request;
+        
     }
+    
 }
 
 /*
@@ -163,10 +156,10 @@ function kebo_twitter_refresh_cache() {
         $response = kebo_twitter_external_request();
         
         // If not WP Error response is in body
-        if ( !is_wp_error($response) ) {
+        if ( ! is_wp_error( $response ) ) {
             
             // Response is in JSON format, so decode it.
-            $response = json_decode($response['body']);
+            $response = json_decode( $response['body'] );
             
         }
         
@@ -174,7 +167,7 @@ function kebo_twitter_refresh_cache() {
         $options = kebo_get_twitter_options();
 
         // Check for Error or Success Response.
-        if (isset($response->errors)) {
+        if ( isset( $response->errors ) ) {
             
             // If error, add to error log.
             kebo_twitter_add_error( $response );
@@ -213,12 +206,12 @@ function kebo_twitter_linkify( $tweets ) {
         if ( ! empty( $tweet->entities->hashtags ) ) {
             
             // One Hashtag at a time
-            foreach ( $tweet->entities->hashtags as $hastag ) {
+            foreach ( $tweet->entities->hashtags as $hashtag ) {
                 
                 // Start offset from 0
                 $offset = 0;
                 // Calculate length of hastag - end minus start
-                $length = $hastag->indices[1] - $hastag->indices[0];
+                $length = $hashtag->indices[1] - $hashtag->indices[0];
                 
                 // If no markers, no need to offset
                 if ( ! empty( $markers ) ) {
@@ -226,7 +219,7 @@ function kebo_twitter_linkify( $tweets ) {
                     foreach ( $markers as $mark ) {
                         
                         // If the start point is past a previous marker, we need to adjust for the characters added.
-                        if ( $hastag->indices[0] > $mark['point'] ) {
+                        if ( $hashtag->indices[0] > $mark['point'] ) {
                             
                             // Include previous offsets.
                             $offset = ( $offset + ( $mark['length'] ) );
@@ -240,11 +233,11 @@ function kebo_twitter_linkify( $tweets ) {
                 /*
                  * Replace hashtag text with an HTML link
                  */
-                $tweet->text = substr_replace( $tweet->text, '<a href="http://twitter.com/search?q=%23' . $hastag->text . '">#' . $hastag->text . '</a>', $hastag->indices[0] + $offset, $length );
+                $tweet->text = substr_replace( $tweet->text, '<a href="http://twitter.com/search?q=%23' . $hashtag->text . '">#' . $hashtag->text . '</a>', $hashtag->indices[0] + $offset, $length );
 
                 // Set marker so we can take into account the characters we just added.
                 $markers[] = array(
-                    'point' => $hastag->indices[0],
+                    'point' => $hashtag->indices[0],
                     'length' => $hash_length + $length,
                 );
                 
@@ -265,11 +258,17 @@ function kebo_twitter_linkify( $tweets ) {
                 $length = $mention->indices[1] - $mention->indices[0];
                 
                 if ( ! empty($markers) ) {
+                    
                     foreach ( $markers as $mark ) {
+                        
                         if ( $mention->indices[0] > $mark['point'] ) {
+                            
                             $offset = ( $offset + ( $mark['length'] ) );
+                            
                         }
+                        
                     }
+                    
                 }
                 
                 /*
