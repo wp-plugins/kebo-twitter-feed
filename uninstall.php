@@ -4,12 +4,10 @@
  */
 
 // Check for Un-Install constant.
-if (!defined('WP_UNINSTALL_PLUGIN'))
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) )
     exit();
 
-add_action('admin_notices', 'kebo_twitter_admin_notice');
-
-if (is_multisite()) {
+if ( is_multisite() ) {
 
     global $wpdb;
 
@@ -34,10 +32,11 @@ if (is_multisite()) {
         // Delete the Options we registered.
         delete_option('kebo_twitter_options');
         delete_option('kebo_twitter_errors');
+        delete_option('kebo_twitter_connection');
 
         // Delete the Transients we registered.
-        delete_transient('kebo_twitter_connection_' . $blog->blog_id);
         delete_transient('kebo_twitter_feed_' . $blog->blog_id);
+        
     }
 
     // Go back to Network Site
@@ -47,16 +46,10 @@ if (is_multisite()) {
 
     // Delete the Option we registered.
     delete_option('kebo_twitter_options');
+    delete_option('kebo_twitter_errors');
+    delete_option('kebo_twitter_connection');
 
     // Delete the Transients we registered.
-    delete_transient('kebo_twitter_connection_1');
     delete_transient('kebo_twitter_feed_1');
-}
-
-function kebo_twitter_admin_notice() {
-    ?>
-    <div class="updated">
-        <p><?php _e('We did an Uninstall!', 'kebo_twitter'); ?></p>
-    </div>
-    <?php
+    
 }
