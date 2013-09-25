@@ -90,7 +90,6 @@ We store data in an option and transient, both of which are removed when you uni
 == Changelog ==
 
 = 0.9.5 =
-* New Feature: Included a 'kebo_twitter.pot' file, so that users can translate the plugin into their own language. If you do translate it, I would be grateful if you could send the files to me and we will include them in the plugin.
 * Note: Removed the date format option. The plugin now uses the date format selected under 'Settings -> General'. This allows it to be automatically be translated for those using WordPress in other languages.
 * Note: Updated the Error Log area of the options page to make it only visible if there have been an error, and to make it more clear these are errors when connecting to the Twitter API.
 * Note: Various updates to the language used in the plugin.
