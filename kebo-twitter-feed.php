@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 0.9.4
+ * Version: 0.9.5
  * Author: Kebo
  * Author URI: http://kebopowered.com
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '0.9.4');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '0.9.5');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -116,7 +116,7 @@ add_action( 'admin_enqueue_scripts', 'kebo_twitter_pointer_script_style' );
 function kebo_twitter_pointer_print_scripts() {
 
     $pointer_content = '<h3>' . __('Connect to your Twitter Account', 'kebo_twitter') . '</h3>';
-    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your Latest Tweets.', 'kebo_twitter') . ' <a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Get Started Now', 'kebo_twitter') . '</a></p>';
+    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your latest Tweets.', 'kebo_twitter') . ' <a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Get Started Now', 'kebo_twitter') . '</a></p>';
     ?>
 
     <script type="text/javascript">
@@ -300,7 +300,7 @@ function kebo_twitter_upgrade_notice() {
     ?>
     
     <div class="updated">
-        <p><?php _e( 'This update changed the way your connection to Twitter was stored by WordPress, please check the plugin is still connected to your Twitter account, <a href="' . admin_url( 'options-general.php?page=kebo-twitter' ) . '">here</a>.', 'kebo_twitter' ); ?></p>
+        <p><?php echo sprintf( __( 'This update changed the way your connection to Twitter was stored by WordPress, please check the plugin is still connected to your Twitter account, <a href="%s">here</a>.', 'kebo_twitter' ), admin_url( 'options-general.php?page=kebo-twitter' ) ); ?></p>
     </div>
     
     <?php
@@ -329,7 +329,7 @@ function kebo_twitter_no_connection_notice() {
     ?>
     
     <div class="updated">
-        <p><?php _e( '<strong>Kebo Twitter Feed: No connection to Twitter found, to get started connect to your Twitter account from <a href="' . admin_url( 'options-general.php?page=kebo-twitter' ) . '">this page</a>.</strong>', 'kebo_twitter' ); ?></p>
+        <p><?php echo sprintf( __( '<strong>Kebo Twitter Feed:</strong> No connection to Twitter found, to get started connect to your Twitter account from <a href="%s">this page</a>.', 'kebo_twitter' ), admin_url( 'options-general.php?page=kebo-twitter' ) ); ?></p>
     </div>
     
     <?php
@@ -341,6 +341,7 @@ function kebo_twitter_no_connection_notice() {
 /**
  * ToDo List
  * 
- * 1. Re-write custom Slider/Fader javascript. Extending features e.g. pause on hover, speed, etc.
+ * 1. Include Re-Tweets in request to Twitter API and give users the option.
+ * 2. 
  * 
  */
