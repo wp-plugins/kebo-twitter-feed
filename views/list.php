@@ -10,9 +10,17 @@
 wp_enqueue_script('jquery');
 ?>
 
-<?php $classes = 'kebo-tweets list ' . $instance['theme']; ?>
+<?php
+// Prepare Classes
+$classes[] = 'kebo-tweets';
+$classes[] = 'list';
+$classes[] = $instance['theme'];
+if ( is_rtl() ) {
+    $classes[] = 'rtl';
+}
+?>
 
-<ul class="<?php echo $classes; ?>">
+<ul class="<?php echo implode(' ', $classes); ?>">
         
     <?php $i = 0; ?>
     
@@ -20,10 +28,10 @@ wp_enqueue_script('jquery');
     $options = kebo_get_twitter_options();
     $format = get_option( 'date_format' );
     $corruption = 0;
-    $count = 0;
+    $lang = mb_substr( get_bloginfo('language'), 0, 2 );
     ?>
     
-    <?php if ( ! empty( $tweets ) ) : ?>
+    <?php if ( ! empty( $tweets->{0}->created_at ) ) : ?>
     
         <?php foreach ( $tweets as $tweet ) : ?>
 
@@ -33,8 +41,6 @@ wp_enqueue_script('jquery');
                 $corruption++;
                 continue;
             }
-            // Count Tweets
-            $count++;
             ?>
     
             <?php
@@ -96,7 +102,7 @@ wp_enqueue_script('jquery');
                 </div>
                 
                 <?php endif; ?>
-
+                
             </li>
 
             <?php if ( ++$i == $instance['count'] ) break; ?>
@@ -112,12 +118,6 @@ wp_enqueue_script('jquery');
     <?php if ( 1 < $corruption ) : ?>
             
             <p><?php _e( 'Sorry, the Tweet data is not in the expected format.', 'kebo_twitter' ); ?></p>
-            
-    <?php endif; ?>
-            
-    <?php if ( 2 > $count ) : ?>
-            
-            <p><?php _e( 'Sorry, no Tweets were found.', 'kebo_twitter' ); ?></p>
             
     <?php endif; ?>
             
