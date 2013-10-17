@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.0.1
+ * Version: 1.0.8
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -15,7 +15,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '1.0.1');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '1.0.8');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -156,26 +156,26 @@ function kebo_twitter_slider_script() {
         //<![CDATA[
         jQuery(document).ready(function() {
             
-            var timer = jQuery( "#kebo-tweet-slider" ).data( "timer" );
-            var transition = jQuery( "#kebo-tweet-slider" ).data( "transition" );
-            var tcount = 1;
-            var limit = jQuery("#kebo-tweet-slider .ktweet").size();
-            var theight = jQuery('#kebo-tweet-slider .ktweet').eq(0).outerHeight();
-            var initTweets = setInterval( fadeTweets, timer );
+            var ktimer = jQuery( "#kebo-tweet-slider" ).data( "timer" );
+            var ktransition = jQuery( "#kebo-tweet-slider" ).data( "transition" );
+            var kcount = 1;
+            var klimit = jQuery("#kebo-tweet-slider .ktweet").size();
+            var kheight = jQuery('#kebo-tweet-slider .ktweet').eq(0).outerHeight();
+            var initTweets = setInterval( fadeTweets, ktimer );
             
-            jQuery('#kebo-tweet-slider .ktweet').eq(0).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
-            jQuery('#kebo-tweet-slider').height(theight);
+            jQuery('#kebo-tweet-slider .ktweet').eq(0).fadeToggle('1000').delay( ktimer - ktransition ).fadeToggle('1000');
+            jQuery('#kebo-tweet-slider').height( kheight );
 
             function fadeTweets() {
 
-                if (tcount == limit) {
-                    tcount = 0;
+                if ( kcount == klimit ) {
+                    kcount = 0;
                 }
-                theight = jQuery('#kebo-tweet-slider .ktweet').eq(tcount).outerHeight();
-                jQuery('#kebo-tweet-slider').height(theight);
-                jQuery('#kebo-tweet-slider .ktweet').eq(tcount).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
+                kheight = jQuery('#kebo-tweet-slider .ktweet').eq( kcount ).outerHeight();
+                jQuery('#kebo-tweet-slider').height( kheight );
+                jQuery('#kebo-tweet-slider .ktweet').eq( kcount ).fadeToggle('1000').delay( ktimer - ktransition ).fadeToggle('1000');
 
-                ++tcount;
+                ++kcount;
 
             }
 
@@ -216,27 +216,36 @@ function kebo_twitter_touch_script() {
 }
 
 /*
- * Runs if version check matches
+ * Check if the plugin has updated.
+ * If so process any changes and update current version.
  */
-$plugin_version = get_option( 'kebo_se_version' );
+function kebo_twitter_update_check() {
+    
+    $plugin_version = get_option( 'kebo_se_version' );
+    
+    /*
+     * Runs if version check matches
+     */
+    if ( false == $plugin_version || empty( $plugin_version ) || ( ! empty( $plugin_version ) && KEBO_TWITTER_PLUGIN_VERSION > $plugin_version ) ) {
 
-if ( false == $plugin_version || empty( $plugin_version ) || ( ! empty( $plugin_version ) && KEBO_TWITTER_PLUGIN_VERSION > $plugin_version ) ) {
-    
-    //add_action( 'admin_notices', 'kebo_twitter_upgrade_notice' );
-    
-    // Delete currently cached data as format is changing in 0.9.0
-    delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
-    
-    // Set silent cache to refresh after page load.
-    add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
-    
-    // Connection Migration Script
-    add_action( 'after_setup_theme', 'kebo_twitter_activation_script' );
-    
-    // Update Plugin Version Option
-    update_option( 'kebo_se_version', KEBO_TWITTER_PLUGIN_VERSION );
-    
+        //add_action( 'admin_notices', 'kebo_twitter_upgrade_notice' );
+
+        // Delete currently cached data as format is changing in 0.9.0
+        delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
+
+        // Set silent cache to refresh after page load.
+        add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
+
+        // Connection Migration Script
+        add_action( 'after_setup_theme', 'kebo_twitter_activation_script' );
+
+        // Update Plugin Version Option
+        update_option( 'kebo_se_version', KEBO_TWITTER_PLUGIN_VERSION );
+
+    }
+
 }
+add_action( 'admin_init', 'kebo_twitter_update_check' );
 
 function kebo_twitter_activation_script() {
     
