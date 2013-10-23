@@ -22,6 +22,21 @@ if ( ! empty ( $twitter_data ) ) {
 
 class Kebo_Twitter_Feed_Widget extends WP_Widget {
 
+    /**
+     * Has the Tweet Intent javascript been printed?
+     */
+    static $printed_intent_js;
+    
+    /**
+     * Has the Tweet Slider javascript been printed?
+     */
+    static $printed_slider_js;
+    
+    /**
+     * Has the Tweet Media javascript been printed?
+     */
+    static $printed_media_js;
+    
     function Kebo_Twitter_Feed_Widget() {
 
         $widget_ops = array(
@@ -36,18 +51,34 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
     /*
      * Outputs Content
      */
-    function widget($args, $instance) {
+    function widget( $args, $instance ) {
         
-        extract($args, EXTR_SKIP);
+        extract( $args, EXTR_SKIP );
         
         // Enqueue Style Sheet
         wp_enqueue_style( 'kebo-twitter-plugin' );
+        wp_enqueue_script( 'jquery' );
+        
+        if ( ! true == self::$printed_intent_js ) {
+            
+            self::$printed_intent_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_intent_script', 90 );
+            
+        }
+        
+        if ( 2 == $instance['style'] && ! true == self::$printed_slider_js ) {
+            
+            self::$printed_slider_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_slider_script', 90 );
+
+        }
         
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) ) {
             return;
+        }
         
         // Ensure not undefined for updates
         if ( ! isset( $instance['conversations'] ) )
@@ -65,7 +96,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         echo $before_widget;
         
         // If Title is set, output it with Widget title opening and closing HTML
-        if ( isset($instance['title'] ) && ! empty( $instance['title'] ) ) {
+        if ( isset( $instance['title'] ) && ! empty( $instance['title'] ) ) {
 
             echo $before_title;
             echo $instance['title'];
@@ -175,7 +206,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
     /*
      * Validates and Updates Options
      */
-    function update($new_instance, $old_instance) {
+    function update( $new_instance, $old_instance ) {
         
         $instance = array();
         
@@ -184,7 +215,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         
         // Update text inputs and remove HTML.
         $instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
-        $instance['style'] = wp_filter_nohtml_kses( $new_instance['style'] );
+        $instance['style'] = intval( $new_instance['style'] );
         $instance['theme'] = wp_filter_nohtml_kses( $new_instance['theme'] );
         $instance['avatar'] = wp_filter_nohtml_kses( $new_instance['avatar'] );
         $instance['conversations'] = wp_filter_nohtml_kses( $new_instance['conversations'] );
