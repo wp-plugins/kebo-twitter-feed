@@ -51,9 +51,9 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
     /*
      * Outputs Content
      */
-    function widget($args, $instance) {
+    function widget( $args, $instance ) {
         
-        extract($args, EXTR_SKIP);
+        extract( $args, EXTR_SKIP );
         
         // Enqueue Style Sheet
         wp_enqueue_style( 'kebo-twitter-plugin' );
@@ -76,8 +76,9 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) ) {
             return;
+        }
         
         // Ensure not undefined for updates
         if ( ! isset( $instance['conversations'] ) )
@@ -205,7 +206,7 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
     /*
      * Validates and Updates Options
      */
-    function update($new_instance, $old_instance) {
+    function update( $new_instance, $old_instance ) {
         
         $instance = array();
         

@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.1.4
+ * Version: 1.1.5
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -15,7 +15,7 @@ if (!defined('ABSPATH'))
     exit;
 
 if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '1.1.4');
+    define('KEBO_TWITTER_PLUGIN_VERSION', '1.1.5');
 if (!defined('KEBO_TWITTER_PLUGIN_URL'))
     define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
@@ -157,17 +157,15 @@ function kebo_twitter_slider_script() {
         //<![CDATA[
         jQuery(document).ready(function() {
             
-            var ktimer = jQuery( "#kebo-tweet-slider" ).data( "timer" );
-            var ktransition = jQuery( "#kebo-tweet-slider" ).data( "transition" );
+            var ktimer = jQuery( '#kebo-tweet-slider' ).data( 'timer' );
+            var ktransition = jQuery( '#kebo-tweet-slider' ).data( 'transition' );
             var kcount = 1;
-            var klimit = jQuery("#kebo-tweet-slider .ktweet").size();
+            var klimit = jQuery('#kebo-tweet-slider .ktweet').size();
             var kheight = jQuery('#kebo-tweet-slider .ktweet').eq(0).outerHeight();
             var initTweets = setInterval( fadeTweets, ktimer );
             
             jQuery('#kebo-tweet-slider .ktweet').eq(0).fadeToggle('1000').delay( ktimer - ktransition ).fadeToggle('1000');
             jQuery('#kebo-tweet-slider').height( kheight );
-            
-            <?php if ( kebo_twitter_masonry_check() ) { ?>jQuery( '.masonry' ).masonry('reload');<?php } ?>
 
             function fadeTweets() {
 
@@ -178,7 +176,6 @@ function kebo_twitter_slider_script() {
                 kheight = jQuery('#kebo-tweet-slider .ktweet').eq( kcount ).outerHeight();
                 jQuery('#kebo-tweet-slider').height( kheight );
                 jQuery('#kebo-tweet-slider .ktweet').eq( kcount ).fadeToggle('1000').delay( ktimer - ktransition ).fadeToggle('1000');
-                <?php if ( kebo_twitter_masonry_check() ) { ?>jQuery( '.masonry' ).masonry('reload');<?php } ?>
                 
                 ++kcount;
 
@@ -190,26 +187,6 @@ function kebo_twitter_slider_script() {
     </script>
     <?php
 
-}
-
-function kebo_twitter_masonry_check() {
-    
-    global $wp_scripts;
-    
-    $found = false;
-    
-    foreach ( $wp_scripts -> registered as $registered ) {
-        
-        if ( ( 'jquery-masonry' == $registered->handle ) || ( false !== strpos( $registered->handle, 'masonry' ) ) || ( false !== strpos( $registered->src, 'masonry' ) ) ) {
-            
-            $found = true;
-            
-        }
-    
-    }
-    
-    return $found;
-    
 }
 
 /*
