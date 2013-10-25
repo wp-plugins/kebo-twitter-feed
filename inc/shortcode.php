@@ -4,10 +4,11 @@
  */
 
 class Kebo_Twitter_Shortcode {
-
+    
     static function init() {
 
         add_shortcode('kebo_tweets', array(__CLASS__, 'handle_shortcode'));
+        
     }
 
     static function handle_shortcode($atts) {
@@ -32,6 +33,21 @@ class Kebo_Twitter_Shortcode {
         
         // Enqueue Style Sheet
         wp_enqueue_style( 'kebo-twitter-plugin' );
+        wp_enqueue_script( 'jquery' );
+        
+        if ( ! true == Kebo_Twitter_Feed_Widget::$printed_intent_js ) {
+            
+            Kebo_Twitter_Feed_Widget::$printed_intent_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_intent_script', 90 );
+            
+        }
+        
+        if ( 'slider' == $style && ! true == Kebo_Twitter_Feed_Widget::$printed_slider_js ) {
+            
+            Kebo_Twitter_Feed_Widget::$printed_slider_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_slider_script', 90 );
+
+        }
         
         // Add defaults.
         $instance['title'] = $title;
@@ -76,8 +92,9 @@ class Kebo_Twitter_Shortcode {
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) ) {
             return false;
+        }
         
         // If an offset is set, slice early items off the array
         if ( ! false == $offset && is_numeric( $offset ) ) {
