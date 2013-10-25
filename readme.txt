@@ -2,8 +2,8 @@
 Contributors: PeterBooker, lukeketley
 Tags: twitter, feed, twitter feed, latest tweets, twitter api, shortcode, widget, tweets, twitter tweets
 Requires at least: 3.2
-Tested up to: 3.6.1
-Stable tag: 1.0.1
+Tested up to: 3.7
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Hassle-free and user-friendly way to add a Twitter Feed to your website. Get sta
 * Compatible with any WordPress hosting.
 * WordPress Multisite compatible.
 * Refreshes Tweets in the background, never impacts pageload.
-* Translation ready - German included (thanks pixolin).
+* Translation ready (see below for included languages).
 
 Other solutions usually require you to create a Twitter App and provide the plugin with oAuth credentials yourself. We don't believe it should be that hard, and with our plugin you can get the Tweets displayed on your website with just a few clicks.
 
@@ -34,6 +34,15 @@ We make this so easy by managing all the complex oAuth requests on our own serve
 * Choose to show a profile image, attached media and much more with your Tweets.
 * Advanced Caching, so that we never impact pageload speed.
 * Local cache backup, in case the connection to Twitter has problems.
+
+= Included Translations =
+
+* German by [Bego Mario Garde](https://twitter.com/pixolin).
+* Russian by [Stas Newdel](http://newdel.net).
+* Italian by [Alberto Ramacciotti](http://ramacciotti.altervista.org).
+* Dutch by [Renee Klein](http://restaurantthemes101.com).
+* English (British).
+* Swedish by [Johanna Kitzman](https://www.facebook.com/johannakitzmanphotography).
 
 = Rate Us / Feedback =
 
@@ -88,6 +97,55 @@ We store data in an option and transient, both of which are removed when you uni
 5. An example of how the Widget fits into the design of a theme automatically.
 
 == Changelog ==
+
+= 1.1.6 =
+* Bug Fix: The Shortcode now correctly prints the Slider javascript.
+* Bug Fix: Changed the way the Slider calculates how many slides are present, which fixes a problem where some cycles of the Slider had all slides hidden.
+
+= 1.1.5 =
+* Note: Removed all the jQuery Masonry compatibility code, as it was causing another bug where the Slider would get stuck and repeatedly show a single slide.
+
+= 1.1.4 =
+* Bug Fix: Fixed an error where the slider would get to the last slide and then continue showing this slide permanently.
+* Note: Improved jQuery Masonry detection and recalculation.
+
+= 1.1.3 =
+* Bug Fix: Default CSS now forces 'text-align: left' on the account name of each Tweet.
+* Note: Improved the code which attempts to detect jQuery Masonry.
+
+= 1.1.2 =
+* Bug Fix: Added inline CSS to list items in the Slider. This prevents themes from overwriting the 'display: none' property which breaks the slider, causing two slides to be visible at a time.
+* Bug Fix: Added a check for jQuery Masonry being active when using the Slider, if so each slide forces Masonry to recalculate positions, so the resizing of the Tweets does not break the widget positioning.
+
+= 1.1.1 =
+* Bug Fix: Changed how we sanitize/validate the 'Style' option in the Widget. We now test it against being a numerical value, instead of filtering it for HTML.
+
+= 1.1.0 =
+* Note: Removed inline javascript from view files into functions. If you are using custom View files, you can safely remove the inline javascript after updating. There is a small edit to the end of the lists view file to ensure the media javascript is output.
+
+= 1.0.9 =
+* Bug Fix: Correctly supply https avatar images when the site is using SSL.
+* Bug Fix: Added default style to Tweet text as 'text-align: left' to ensure other theme Widget styling does not overwrite it.
+
+= 1.0.8 =
+* New Feature: Included the Swedish language translation files. Our thanks to Johanna Kitzman for providing the translation.
+
+= 1.0.7 =
+* New Feature: Included the British English (en_GB) language translation files.
+* Bug Fix: Now correctly displays Re-Tweets, with the exact original text.
+
+= 1.0.5 =
+* Bug Fix: Prevent simultaneous Twitter API updates in certain situations. This did not effect users in any way and neither will the change.
+* Bug Fix: Correctly prefix all Javascript variables with 'k', so they do not clash with others. Only effects those displaying Tweets using the 'Slider' method.
+
+= 1.0.4 =
+* New Feature: Included the Dutch language translation files. Our thanks to Renee Klein from themes101 for providing the translation.
+
+= 1.0.3 =
+* New Feature: Included the Italian language translation files. Our thanks to Alberto Ramacciotti (obert) for providing the translation.
+
+= 1.0.2 =
+* Note: New version to fix a bad released on wordpress.org, some files got muddled up in version 1.0.1.
 
 = 1.0.1 =
 * Note: We finally reached our goals for compatibility, reliability and feature set and have moved past the version 1.0.0 release point. This means we are confident that users of the plugin will have an excellent experience. However it does not mean we are going to stop working on the plugin, as there are more features and a lot of polish we would like to add, to make this the greatest Twitter Feed plugin of all. Thanks to all our users and everyone who has made the time to give feedback, your input and support is invaluable.
