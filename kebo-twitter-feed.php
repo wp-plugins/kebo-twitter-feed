@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.1.8
+ * Version: 1.2.0
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -14,7 +14,7 @@
 if (!defined('ABSPATH'))
     exit;
 
-define('KEBO_TWITTER_PLUGIN_VERSION', '1.1.8');
+define('KEBO_TWITTER_PLUGIN_VERSION', '1.2.0');
 define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
@@ -64,8 +64,15 @@ if ( ! function_exists('kebo_twitter_plugin_scripts') ):
         wp_register_style( 'kebo-twitter-plugin', KEBO_TWITTER_PLUGIN_URL . 'css/plugin.css', array(), KEBO_TWITTER_PLUGIN_VERSION, 'all' );
 
         // Enqueue Stylesheet for Admin Pages
-        if ( is_admin() )
+        if ( is_admin() ) {
             wp_enqueue_style('kebo-twitter-plugin');
+        }
+        
+        // WP 3.2 compatibility (cannot enqueue after the header).
+        global $wp_version;
+        if ( version_compare( $wp_version, '3.3', '<' ) ) {
+            wp_enqueue_style('kebo-twitter-plugin');
+        }
         
     }
     add_action('wp_enqueue_scripts', 'kebo_twitter_scripts');
@@ -84,7 +91,7 @@ function kebo_twitter_plugin_meta( $links ) {
 }
 add_filter( 'plugin_action_links_kebo-twitter-feed/kebo-twitter-feed.php', 'kebo_twitter_plugin_meta' );
 
-/*
+/**
  * Check we are on WordPress version 3.3 at least,
  * before trying to use the WP Pointer.
  */
