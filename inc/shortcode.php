@@ -4,10 +4,11 @@
  */
 
 class Kebo_Twitter_Shortcode {
-
+    
     static function init() {
 
         add_shortcode('kebo_tweets', array(__CLASS__, 'handle_shortcode'));
+        
     }
 
     static function handle_shortcode($atts) {
@@ -32,6 +33,21 @@ class Kebo_Twitter_Shortcode {
         
         // Enqueue Style Sheet
         wp_enqueue_style( 'kebo-twitter-plugin' );
+        wp_enqueue_script( 'jquery' );
+        
+        if ( ! true == Kebo_Twitter_Feed_Widget::$printed_intent_js ) {
+            
+            Kebo_Twitter_Feed_Widget::$printed_intent_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_intent_script', 90 );
+            
+        }
+        
+        if ( 'slider' == $style && ! true == Kebo_Twitter_Feed_Widget::$printed_slider_js ) {
+            
+            Kebo_Twitter_Feed_Widget::$printed_slider_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_slider_script', 90 );
+
+        }
         
         // Add defaults.
         $instance['title'] = $title;
@@ -69,15 +85,16 @@ class Kebo_Twitter_Shortcode {
         
         if ( isset( $instance['title'] ) ) {
             
-            echo '<h2 class="ktweets-title">' . $instance['title'] . '</h2>';
+            echo '<h2 class="ktweets-title">' . esc_html( $instance['title'] ) . '</h2>';
             
         }
         
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) ) {
             return false;
+        }
         
         // If an offset is set, slice early items off the array
         if ( ! false == $offset && is_numeric( $offset ) ) {
@@ -86,15 +103,35 @@ class Kebo_Twitter_Shortcode {
             
         }
         
-        // Output Twitter Feed
+        /*
+         * Check which Style (Slider/List) has been chosen and use correct view file, default List.
+         */
         if ( 2 == $instance['style'] ) {
-
-            require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+            
+            if ( '' != locate_template( 'views/kebo-twitter-slider.php' ) ) {
                 
+                // yep, load the page template
+                get_template_part( 'views/kebo-twitter-slider' );
+                    
+            } else {
+                
+                require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+                
+            }
+            
         } else {
-
-            require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+            
+            if ( '' != locate_template( 'views/kebo-twitter-list.php' ) ) {
                 
+                // yep, load the page template
+                get_template_part( 'views/kebo-twitter-list' );
+                    
+            } else {
+                
+                require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+                
+            }
+            
         }
         
         // End of Shortcode Container
