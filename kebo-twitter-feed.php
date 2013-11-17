@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -177,14 +177,14 @@ function kebo_twitter_slider_script() {
         //<![CDATA[
         jQuery(document).ready(function() {
             
-            ktimeout = jQuery( "#<?php echo $widget_id; ?> ul" ).data( "timeout" );
-            kspeed = jQuery( "#<?php echo $widget_id; ?> ul" ).data( "speed" );
+            ktimeout = jQuery( ".<?php echo $widget_id; ?>" ).data( "timeout" );
+            kspeed = jQuery( ".<?php echo $widget_id; ?>" ).data( "speed" );
             
             jQuery( function() {
-                jQuery("#<?php echo $widget_id; ?> ul").responsiveSlides({
+                jQuery( ".<?php echo $widget_id; ?>" ).responsiveSlides({
                     auto: true,           // Boolean: Animate automatically, true or false
-                    speed: kspeed,           // Integer: Speed of the transition, in milliseconds
-                    timeout: ktimeout,        // Integer: Time between slide transitions, in milliseconds
+                    speed: kspeed,        // Integer: Speed of the transition, in milliseconds
+                    timeout: ktimeout,    // Integer: Time between slide transitions, in milliseconds
                     pager: false,         // Boolean: Show pager, true or false
                     nav: false,           // Boolean: Show navigation, true or false
                     random: false,        // Boolean: Randomize the order of the slides, true or false
