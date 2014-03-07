@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.0.1
+ * Version: 1.4.6
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -14,12 +14,9 @@
 if (!defined('ABSPATH'))
     exit;
 
-if (!defined('KEBO_TWITTER_PLUGIN_VERSION'))
-    define('KEBO_TWITTER_PLUGIN_VERSION', '1.0.1');
-if (!defined('KEBO_TWITTER_PLUGIN_URL'))
-    define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
-if (!defined('KEBO_TWITTER_PLUGIN_PATH'))
-    define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('KEBO_TWITTER_PLUGIN_VERSION', '1.4.4');
+define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 function kebo_twitter_plugin_setup() {
 
@@ -47,6 +44,11 @@ function kebo_twitter_plugin_setup() {
      * Include Shortcode.
      */
     require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/shortcode.php' );
+    
+    /**
+     * Include AJAX.
+     */
+    require_once( KEBO_TWITTER_PLUGIN_PATH . 'inc/ajax.php' );
 
     /**
      * Load Text Domain for Translations.
@@ -65,10 +67,19 @@ if ( ! function_exists('kebo_twitter_plugin_scripts') ):
 
         // Queues the main CSS file.
         wp_register_style( 'kebo-twitter-plugin', KEBO_TWITTER_PLUGIN_URL . 'css/plugin.css', array(), KEBO_TWITTER_PLUGIN_VERSION, 'all' );
-
+        
+        wp_register_script( 'responsive-slides', KEBO_TWITTER_PLUGIN_URL . 'js/responsiveslides.min.js', array( 'jquery' ), KEBO_TWITTER_PLUGIN_VERSION, false );
+        
         // Enqueue Stylesheet for Admin Pages
-        if (is_admin())
+        if ( is_admin() ) {
             wp_enqueue_style('kebo-twitter-plugin');
+        }
+        
+        // WP 3.2 compatibility (cannot enqueue after the header).
+        global $wp_version;
+        if ( version_compare( $wp_version, '3.3', '<' ) ) {
+            wp_enqueue_style('kebo-twitter-plugin');
+        }
         
     }
     add_action('wp_enqueue_scripts', 'kebo_twitter_scripts');
@@ -88,61 +99,71 @@ function kebo_twitter_plugin_meta( $links ) {
 add_filter( 'plugin_action_links_kebo-twitter-feed/kebo-twitter-feed.php', 'kebo_twitter_plugin_meta' );
 
 /**
- * Adds a WordPress pointer to Kebo Twitter settings page.
+ * Check we are on WordPress version 3.3 at least,
+ * before trying to use the WP Pointer.
  */
-function kebo_twitter_pointer_script_style( $hook_suffix ) {
+global $wp_version;
 
-    // Assume pointer shouldn't be shown
-    $enqueue_pointer_script_style = false;
-
-    // Get array list of dismissed pointers for current user and convert it to array
-    $dismissed_pointers = explode( ',', get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
-
-    // Check if our pointer is not among dismissed ones
-    if ( ! in_array( 'kebo_twitter_settings_pointer', $dismissed_pointers ) ) {
-        $enqueue_pointer_script_style = true;
-
-        // Add footer scripts using callback function
-        add_action('admin_print_footer_scripts', 'kebo_twitter_pointer_print_scripts');
-    }
-
-    // Enqueue pointer CSS and JS files, if needed
-    if ( $enqueue_pointer_script_style ) {
-        wp_enqueue_style( 'wp-pointer' );
-        wp_enqueue_script( 'wp-pointer' );
-    }
+if ( version_compare( $wp_version, '3.3', '>=' ) ) {
     
-}
-add_action( 'admin_enqueue_scripts', 'kebo_twitter_pointer_script_style' );
+    /**
+     * Adds a WordPress pointer to Kebo Twitter settings page.
+     */
+    function kebo_twitter_pointer_script_style( $hook_suffix ) {
 
-function kebo_twitter_pointer_print_scripts() {
+        // Assume pointer shouldn't be shown
+        $enqueue_pointer_script_style = false;
 
-    $pointer_content = '<h3>' . __('Connect to your Twitter Account', 'kebo_twitter') . '</h3>';
-    $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your latest Tweets.', 'kebo_twitter') . ' <a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Get Started Now', 'kebo_twitter') . '</a></p>';
-    ?>
+        // Get array list of dismissed pointers for current user and convert it to array
+        $dismissed_pointers = explode( ',', get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
 
-    <script type="text/javascript">
-        //<![CDATA[
-        jQuery(document).ready(function($) {
-            $('#menu-settings').pointer({
-                content: '<?php echo $pointer_content; ?>',
-                position: {
-                    edge: 'left', // arrow direction
-                    align: 'center' // vertical alignment
-                },
-                pointerWidth: 350,
-                close: function() {
-                    $.post(ajaxurl, {
-                        pointer: 'kebo_twitter_settings_pointer', // pointer ID
-                        action: 'dismiss-wp-pointer'
-                    });
-                }
-            }).pointer('open');
-        });
-        //]]>
-    </script>
+        // Check if our pointer is not among dismissed ones
+        if ( ! in_array( 'kebo_twitter_settings_pointer', $dismissed_pointers ) ) {
+            $enqueue_pointer_script_style = true;
 
-    <?php
+            // Add footer scripts using callback function
+            add_action('admin_print_footer_scripts', 'kebo_twitter_pointer_print_scripts');
+        }
+
+        // Enqueue pointer CSS and JS files, if needed
+        if ( $enqueue_pointer_script_style ) {
+            wp_enqueue_style( 'wp-pointer' );
+            wp_enqueue_script( 'wp-pointer' );
+        }
+
+    }
+    add_action( 'admin_enqueue_scripts', 'kebo_twitter_pointer_script_style' );
+
+    function kebo_twitter_pointer_print_scripts() {
+
+        $pointer_content = '<h3>' . __('Connect to your Twitter Account', 'kebo_twitter') . '</h3>';
+        $pointer_content .= '<p>' . __('In just a few clicks we can connect your website to your Twitter account and display your latest Tweets.', 'kebo_twitter') . ' <a href="' . admin_url('options-general.php?page=kebo-twitter') . '">' . __('Get Started Now', 'kebo_twitter') . '</a></p>';
+        ?>
+
+        <script type="text/javascript">
+            //<![CDATA[
+            jQuery(document).ready(function($) {
+                $('#menu-settings').pointer({
+                    content: '<?php echo $pointer_content; ?>',
+                    position: {
+                        edge: 'left', // arrow direction
+                        align: 'center' // vertical alignment
+                    },
+                    pointerWidth: 350,
+                    close: function() {
+                        $.post(ajaxurl, {
+                            pointer: 'kebo_twitter_settings_pointer', // pointer ID
+                            action: 'dismiss-wp-pointer'
+                        });
+                    }
+                }).pointer('open');
+            });
+            //]]>
+        </script>
+
+        <?php
+    }
+
 }
 
 /*
@@ -151,36 +172,106 @@ function kebo_twitter_pointer_print_scripts() {
  */
 function kebo_twitter_slider_script() {
     
+    // Collect the IDs of all Widgets using the Slider display.
+    $widget_ids = Kebo_Twitter_Feed_Widget::$slider_ids;
+    
+    foreach ( $widget_ids as $widget_id ) {
+        
     ?>
     <script type="text/javascript">
         //<![CDATA[
         jQuery(document).ready(function() {
             
-            var timer = jQuery( "#kebo-tweet-slider" ).data( "timer" );
-            var transition = jQuery( "#kebo-tweet-slider" ).data( "transition" );
-            var tcount = 1;
-            var limit = jQuery("#kebo-tweet-slider .ktweet").size();
-            var theight = jQuery('#kebo-tweet-slider .ktweet').eq(0).outerHeight();
-            var initTweets = setInterval( fadeTweets, timer );
+            ktimeout = jQuery( ".<?php echo $widget_id; ?>" ).data( "timeout" );
+            kspeed = jQuery( ".<?php echo $widget_id; ?>" ).data( "speed" );
             
-            jQuery('#kebo-tweet-slider .ktweet').eq(0).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
-            jQuery('#kebo-tweet-slider').height(theight);
-
-            function fadeTweets() {
-
-                if (tcount == limit) {
-                    tcount = 0;
-                }
-                theight = jQuery('#kebo-tweet-slider .ktweet').eq(tcount).outerHeight();
-                jQuery('#kebo-tweet-slider').height(theight);
-                jQuery('#kebo-tweet-slider .ktweet').eq(tcount).fadeToggle('1000').delay( timer - transition ).fadeToggle('1000');
-
-                ++tcount;
-
-            }
+            jQuery( function() {
+                jQuery( ".<?php echo $widget_id; ?>" ).responsiveSlides({
+                    auto: true,           // Boolean: Animate automatically, true or false
+                    speed: kspeed,        // Integer: Speed of the transition, in milliseconds
+                    timeout: ktimeout,    // Integer: Time between slide transitions, in milliseconds
+                    pager: false,         // Boolean: Show pager, true or false
+                    nav: false,           // Boolean: Show navigation, true or false
+                    random: false,        // Boolean: Randomize the order of the slides, true or false
+                    pause: true           // Boolean: Pause on hover, true or false
+                });
+            });
 
         });
         //]]>
+    </script>
+    <?php
+    
+    }
+
+}
+
+/*
+ * Print the Tweet Intent js
+ */
+function kebo_twitter_intent_script() {
+    
+    ?>
+    <script type="text/javascript">
+        
+        //<![CDATA[
+        jQuery(document).ready(function() {
+            
+            jQuery( '.ktweet .kfooter a:not(.ktogglemedia)' ).click(function(e) {
+
+                // Prevent Click from Reloading page
+                e.preventDefault();
+
+                var khref = jQuery(this).attr('href');
+                window.open( khref, 'twitter', 'width=600, height=400, top=0, left=0');
+
+            });
+            
+        });
+        //]]>
+        
+    </script>
+    <?php
+
+}
+
+/*
+ * Print the Tweet Media js
+ */
+function kebo_twitter_media_script() {
+    
+    ?>
+    <script type="text/javascript">
+        
+        //<![CDATA[
+        jQuery(document).ready(function() {
+            
+            jQuery( '.ktweet .ktogglemedia' ).click(function(e) {
+
+                // Prevent Click from Reloading page
+                e.preventDefault();
+
+                var klink = jQuery(this);
+                var kid = klink.data( 'id' );
+                var kcontainer = jQuery( '#' + kid );
+
+                if ( klink.hasClass('kclosed') && kcontainer.hasClass('kclosed') ) {
+
+                    klink.removeClass('kclosed');
+                    kcontainer.removeClass('kclosed');
+
+                } else {
+
+                    klink.addClass('kclosed');
+                    kcontainer.addClass('kclosed');
+
+                };
+
+            });
+            
+        });
+        //]]>
+        
     </script>
     <?php
 
@@ -216,27 +307,36 @@ function kebo_twitter_touch_script() {
 }
 
 /*
- * Runs if version check matches
+ * Check if the plugin has updated.
+ * If so process any changes and update current version.
  */
-$plugin_version = get_option( 'kebo_se_version' );
+function kebo_twitter_update_check() {
+    
+    $plugin_version = get_option( 'kebo_twitter_version' );
+    
+    /*
+     * Runs if version check matches
+     */
+    if ( false == $plugin_version || empty( $plugin_version ) || ( ! empty( $plugin_version ) && KEBO_TWITTER_PLUGIN_VERSION > $plugin_version ) ) {
 
-if ( false == $plugin_version || empty( $plugin_version ) || ( ! empty( $plugin_version ) && KEBO_TWITTER_PLUGIN_VERSION > $plugin_version ) ) {
-    
-    //add_action( 'admin_notices', 'kebo_twitter_upgrade_notice' );
-    
-    // Delete currently cached data as format is changing in 0.9.0
-    delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
-    
-    // Set silent cache to refresh after page load.
-    add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
-    
-    // Connection Migration Script
-    add_action( 'after_setup_theme', 'kebo_twitter_activation_script' );
-    
-    // Update Plugin Version Option
-    update_option( 'kebo_se_version', KEBO_TWITTER_PLUGIN_VERSION );
-    
+        //add_action( 'admin_notices', 'kebo_twitter_upgrade_notice' );
+
+        // Delete currently cached data as format is changing in 0.9.0
+        //delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
+
+        // Set silent cache to refresh after page load.
+        add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
+
+        // Connection Migration Script
+        add_action( 'after_setup_theme', 'kebo_twitter_activation_script' );
+
+        // Update Plugin Version Option
+        update_option( 'kebo_twitter_version', KEBO_TWITTER_PLUGIN_VERSION );
+
+    }
+
 }
+add_action( 'admin_init', 'kebo_twitter_update_check' );
 
 function kebo_twitter_activation_script() {
     
