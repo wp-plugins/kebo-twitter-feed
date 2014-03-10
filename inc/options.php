@@ -92,7 +92,7 @@ function kebo_get_twitter_options() {
     $saved = (array) get_option('kebo_twitter_options');
 
     $defaults = array(
-        'kebo_twitter_cache_timer' => 5,
+        'kebo_twitter_cache_timer' => 15,
     );
 
     $defaults = apply_filters('kebo_get_twitter_options', $defaults);
@@ -110,7 +110,7 @@ function kebo_twitter_cache_timer_render() {
 
     $options = kebo_get_twitter_options();
     ?>
-    <input style="width: 26px;" type="text" name="kebo_twitter_options[kebo_twitter_cache_timer]" id="kebo_twitter_cache_timer" value="<?php echo esc_attr($options['kebo_twitter_cache_timer']); ?>" />
+    <input style="width: 30px;" type="text" name="kebo_twitter_options[kebo_twitter_cache_timer]" id="kebo_twitter_cache_timer" value="<?php echo esc_attr($options['kebo_twitter_cache_timer']); ?>" />
     <label class="description" for="kebo_twitter_cache_timer"><?php _e('Minutes. Should be between 1 and 30.', 'kebo_twitter'); ?></label>
     <p><?php _e('This controls how frequently we update the stored list of Tweets for display on your website.', 'kebo_twitter'); ?></p>
     <?php
@@ -124,6 +124,10 @@ function kebo_twitter_options_validate($input) {
     $options = kebo_get_twitter_options();
 
     $output = array();
+    
+    // Purge currently cached data
+    // A tool to allow users to forcefully reset the cache.
+    delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
     
     // Refresh Tweets when saving settings
     kebo_twitter_get_tweets();

@@ -7,8 +7,9 @@ function kebo_twitter_get_tweets() {
 
     // If there is no social connection, we cannot get tweets, so return false
     $twitter_data = get_option( 'kebo_twitter_connection' );
-    if ( empty ( $twitter_data ) )
+    if ( empty ( $twitter_data ) ) {
         return false;
+    }
 
     // Grab the Plugin Options.
     $options = kebo_get_twitter_options();
@@ -147,7 +148,7 @@ function kebo_twitter_external_request() {
             'headers' => array(),
             'body' => array(
                 'feed' => 'true',
-                'data' => json_encode($data),
+                'data' => json_encode( $data ),
             ),
             'cookies' => array(),
             'sslverify' => false,
@@ -172,6 +173,35 @@ function kebo_twitter_refresh_cache() {
      */
     if ( false !== ( $tweets = get_transient( 'kebo_twitter_feed_' . get_current_blog_id() ) ) ) {
 
+        /*
+         * Check if we are already updating.
+         */
+        if ( get_transient( 'kebo_cron_is_running' ) ) {
+            die();
+        }
+
+        /*
+         * Create hash of the current time (nothing else should occupy the same microtime).
+         */
+        $hash = hash( 'sha1', microtime() );
+
+        /*
+         * Set transient to show we are updating and set the hash for this specific thread.
+         */
+        set_transient( 'kebo_cron_is_running', $hash, 5 );
+        
+        /*
+         * Sleep so that other threads at the same point can set the hash
+         */
+        usleep( 250000 ); // Sleep for 1/4th of a second
+        
+        /*
+         * Only one thread will have the same hash as is stored in the transient now, all others can die.
+         */
+        if ( get_transient( 'kebo_cron_is_running' ) && ( get_transient( 'kebo_cron_is_running' ) != $hash ) ) {
+            die();
+        }
+        
         // Make POST request to Kebo OAuth App.
         $response = kebo_twitter_external_request();
         
@@ -207,6 +237,11 @@ function kebo_twitter_refresh_cache() {
             set_transient( 'kebo_twitter_feed_' . get_current_blog_id(), $tweets, 24 * HOUR_IN_SECONDS );
             
         }
+        
+        /*
+         * Remove transient once updating is done.
+         */
+        delete_transient( 'kebo_cron_is_running' );
         
     }
     
@@ -328,29 +363,63 @@ function kebo_twitter_linkify( $tweets ) {
          */
         
         /*
-         * Decode HTML Chars like &#039; to '
+         * Check if it is the Tweet text or Re-Tweet text which we need to pre-process.
          */
-        $tweet->text = htmlspecialchars_decode( $tweet->text, ENT_QUOTES );
-        
-        /*
-         * Turn Hasntags into HTML Links
-         */
-        $tweet->text = preg_replace( '/#([A-Za-z0-9\/\.]*)/', '<a href="http://twitter.com/search?q=$1">#$1</a>', $tweet->text );
-        
-        /*
-         * Turn Mentions into HTML Links
-         */
-        $tweet->text = preg_replace( '/@([A-Za-z0-9_\/\.]*)/', '<a href="http://www.twitter.com/$1">@$1</a>', $tweet->text );
-        
-        /*
-         * Linkify text URLs
-         */
-        $tweet->text = make_clickable( $tweet->text );
-        
-        /*
-         * Add target="_blank" to all links
-         */
-        $tweet->text = links_add_target( $tweet->text, '_blank', array( 'a' ) );
+        if ( ! empty( $tweet->retweeted_status ) ) {
+            
+           /*
+            * Decode HTML Chars like &#039; to '
+            */
+           $tweet->retweeted_status->text = htmlspecialchars_decode( $tweet->retweeted_status->text, ENT_QUOTES );
+
+           /*
+            * Turn Hasntags into HTML Links
+            */
+           $tweet->retweeted_status->text = preg_replace( '/#([A-Za-z0-9\/\.]*)/', '<a href="http://twitter.com/search?q=$1">#$1</a>', $tweet->retweeted_status->text );
+
+           /*
+            * Turn Mentions into HTML Links
+            */
+           $tweet->retweeted_status->text = preg_replace( '/@([A-Za-z0-9_\/\.]*)/', '<a href="http://www.twitter.com/$1">@$1</a>', $tweet->retweeted_status->text );
+
+           /*
+            * Linkify text URLs
+            */
+           $tweet->retweeted_status->text = make_clickable( $tweet->retweeted_status->text );
+
+           /*
+            * Add target="_blank" to all links
+            */
+           $tweet->retweeted_status->text = links_add_target( $tweet->retweeted_status->text, '_blank', array( 'a' ) );
+            
+        } elseif ( ! empty( $tweet->text ) ) {
+            
+           /*
+            * Decode HTML Chars like &#039; to '
+            */
+           $tweet->text = htmlspecialchars_decode( $tweet->text, ENT_QUOTES );
+
+           /*
+            * Turn Hasntags into HTML Links
+            */
+           $tweet->text = preg_replace( '/#([A-Za-z0-9\/\.]*)/', '<a href="http://twitter.com/search?q=$1">#$1</a>', $tweet->text );
+
+           /*
+            * Turn Mentions into HTML Links
+            */
+           $tweet->text = preg_replace( '/@([A-Za-z0-9_\/\.]*)/', '<a href="http://www.twitter.com/$1">@$1</a>', $tweet->text );
+
+           /*
+            * Linkify text URLs
+            */
+           $tweet->text = make_clickable( $tweet->text );
+
+           /*
+            * Add target="_blank" to all links
+            */
+           $tweet->text = links_add_target( $tweet->text, '_blank', array( 'a' ) );
+            
+        }
         
     }
     
