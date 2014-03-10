@@ -3,7 +3,7 @@
  * Plugin Name: Kebo - Twitter Feed
  * Plugin URI: http://wordpress.org/plugins/kebo-twitter-feed/
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
- * Version: 1.4.6
+ * Version: 1.4.7
  * Author: Kebo
  * Author URI: http://kebopowered.com
  * Text Domain: kebo_twitter
@@ -11,10 +11,11 @@
  */
 
 // Exit if accessed directly
-if (!defined('ABSPATH'))
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
+}
 
-define('KEBO_TWITTER_PLUGIN_VERSION', '1.4.4');
+define('KEBO_TWITTER_PLUGIN_VERSION', '1.4.7');
 define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
@@ -321,8 +322,8 @@ function kebo_twitter_update_check() {
 
         //add_action( 'admin_notices', 'kebo_twitter_upgrade_notice' );
 
-        // Delete currently cached data as format is changing in 0.9.0
-        //delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
+        // Delete currently cached data in an attempt to properly purge corrupt data.
+        delete_transient( 'kebo_twitter_feed_' . get_current_blog_id() );
 
         // Set silent cache to refresh after page load.
         add_action( 'shutdown', 'kebo_twitter_refresh_cache' );
