@@ -22,32 +22,67 @@ if ( ! empty ( $twitter_data ) ) {
 
 class Kebo_Twitter_Feed_Widget extends WP_Widget {
 
+    /**
+     * Has the Tweet Intent javascript been printed?
+     */
+    static $printed_intent_js;
+    
+    /**
+     * Has the Tweet Media javascript been printed?
+     */
+    static $printed_media_js;
+    
+    /**
+     * Widget IDs using Slider display
+     */
+    static $slider_ids = array();
+    
+    /**
+     * Register Widget Details 
+     */
     function Kebo_Twitter_Feed_Widget() {
 
         $widget_ops = array(
             'classname' => 'kebo_twitter_feed_widget',
-            'description' => __('Displays your Twitter Feed on your website.', 'kebo_twitter')
+            'description' => __('Displays your Twitter Feed on your website.', 'kbso')
         );
 
-        $this->WP_Widget( false, __('Kebo Twitter Feed', 'kebo_twitter'), $widget_ops );
+        $this->WP_Widget( false, __('Kebo Twitter Feed', 'kbso'), $widget_ops );
         
     }
 
     /*
      * Outputs Content
      */
-    function widget($args, $instance) {
+    function widget( $args, $instance ) {
         
-        extract($args, EXTR_SKIP);
+        extract( $args, EXTR_SKIP );
         
         // Enqueue Style Sheet
         wp_enqueue_style( 'kebo-twitter-plugin' );
+        wp_enqueue_script( 'jquery' );
+        
+        if ( ! true == self::$printed_intent_js ) {
+            
+            self::$printed_intent_js = true;
+            add_action( 'wp_footer', 'kebo_twitter_intent_script', 90 );
+            
+        }
+        
+        if ( 2 == $instance['style'] ) {
+            
+            self::$slider_ids[] = $widget_id;
+            wp_enqueue_script( 'responsive-slides' );
+            add_action( 'wp_footer', 'kebo_twitter_slider_script', 90 );
+
+        }
         
         /*
          * Get tweets from transient and refresh if its expired.
          */
-        if ( false === ( $tweets = kebo_twitter_get_tweets() ) )
+        if ( false === ( $tweets = kebo_twitter_get_tweets() ) ) {
             return;
+        }
         
         // Ensure not undefined for updates
         if ( ! isset( $instance['conversations'] ) )
@@ -58,6 +93,14 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             $instance['media'] = false;
         
         // Ensure not undefined for updates
+        if ( ! isset( $instance['media_visible'] ) )
+            $instance['media_visible'] = false;
+        
+        // Ensure not undefined for updates
+        if ( ! isset( $instance['intent'] ) )
+            $instance['intent'] = true;
+        
+        // Ensure not undefined for updates
         if ( ! isset( $instance['display'] ) )
             $instance['display'] = 'tweets';
         
@@ -65,10 +108,10 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         echo $before_widget;
         
         // If Title is set, output it with Widget title opening and closing HTML
-        if ( isset($instance['title'] ) && ! empty( $instance['title'] ) ) {
+        if ( isset( $instance['title'] ) && ! empty( $instance['title'] ) ) {
 
             echo $before_title;
-            echo $instance['title'];
+            echo esc_html( $instance['title'] );
             echo $after_title;
             
         }
@@ -78,11 +121,29 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
          */
         if ( 2 == $instance['style'] ) {
             
-            require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+            if ( '' != locate_template( 'views/kebo-twitter-slider.php' ) ) {
+                
+                // yep, load the page template
+                get_template_part( 'views/kebo-twitter-slider' );
+                    
+            } else {
+                
+                require( KEBO_TWITTER_PLUGIN_PATH . 'views/slider.php' );
+                
+            }
             
         } else {
             
-            require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+            if ( '' != locate_template( 'views/kebo-twitter-list.php' ) ) {
+                
+                // yep, load the page template
+                get_template_part( 'views/kebo-twitter-list' );
+                    
+            } else {
+                
+                require( KEBO_TWITTER_PLUGIN_PATH . 'views/list.php' );
+                
+            }
             
         }
         
@@ -113,6 +174,10 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             $instance['conversations'] = false;
         if( !isset( $instance['media'] ) )
             $instance['media'] = false;
+        if( !isset( $instance['media_visible'] ) )
+            $instance['media_visible'] = false;
+        if( !isset( $instance['intent'] ) )
+            $instance['intent'] = true;
         if( !isset( $instance['display'] ) )
             $instance['display'] = 'tweets';
             
@@ -169,13 +234,21 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
             <p><input style="width: 28px;" type="checkbox" value="true" name="<?php echo $this->get_field_name('media'); ?>" id="<?php echo $this->get_field_id('media'); ?>" <?php if ( 'true' == $instance['media'] ) { echo 'checked="checked"'; } ?>> <?php _e('Show media? (only Lists)', 'kebo_twitter'); ?> </p>
         </label>
 
+        <label for="<?php echo $this->get_field_id('media_visible'); ?>">
+            <p><input style="width: 28px;" type="checkbox" value="true" name="<?php echo $this->get_field_name('media_visible'); ?>" id="<?php echo $this->get_field_id('media_visible'); ?>" <?php if ( 'true' == $instance['media_visible'] ) { echo 'checked="checked"'; } ?>> <?php _e('Media visible on load?', 'kebo_twitter'); ?> </p>
+        </label>
+
+        <label for="<?php echo $this->get_field_id('intent'); ?>">
+            <p><input style="width: 28px;" type="checkbox" value="true" name="<?php echo $this->get_field_name('intent'); ?>" id="<?php echo $this->get_field_id('intent'); ?>" <?php if ( 'true' == $instance['intent'] ) { echo 'checked="checked"'; } ?>> <?php _e('Show Intent Links?', 'kebo_twitter'); ?> </p>
+        </label>
+
         <?php
     }
 
     /*
      * Validates and Updates Options
      */
-    function update($new_instance, $old_instance) {
+    function update( $new_instance, $old_instance ) {
         
         $instance = array();
         
@@ -184,11 +257,13 @@ class Kebo_Twitter_Feed_Widget extends WP_Widget {
         
         // Update text inputs and remove HTML.
         $instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
-        $instance['style'] = wp_filter_nohtml_kses( $new_instance['style'] );
+        $instance['style'] = intval( $new_instance['style'] );
         $instance['theme'] = wp_filter_nohtml_kses( $new_instance['theme'] );
         $instance['avatar'] = wp_filter_nohtml_kses( $new_instance['avatar'] );
         $instance['conversations'] = wp_filter_nohtml_kses( $new_instance['conversations'] );
         $instance['media'] = wp_filter_nohtml_kses( $new_instance['media'] );
+        $instance['media_visible'] = wp_filter_nohtml_kses( $new_instance['media_visible'] );
+        $instance['intent'] = wp_filter_nohtml_kses( $new_instance['intent'] );
         $instance['display'] = wp_filter_nohtml_kses( $new_instance['display'] );
         
         // Check 'count' is numeric.
