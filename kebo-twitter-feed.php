@@ -5,7 +5,7 @@
  * Description: Connect your site to your Twitter account and display your Twitter Feed on your website effortlessly with a custom widget. 
  * Version: 1.5.7
  * Author: Kebo
- * Author URI: https://kebopowered.com/
+ * Author URI: https://www.kebo.io/
  * Text Domain: kebo_twitter
  * Domain Path: /languages
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define('KEBO_TWITTER_PLUGIN_VERSION', '1.5.7');
+define('KEBO_TWITTER_PLUGIN_VERSION', '1.5.8');
 define('KEBO_TWITTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KEBO_TWITTER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
